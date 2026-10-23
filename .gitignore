@@ -1,0 +1,64 @@
+# ========= Unity-Generiert (nicht einchecken!) =========
+
+# Bibliothek-Cache: wird von Unity komplett neu generiert, oft mehrere GB
+[Ll]ibrary/
+
+# Temp-Dateien des Editors
+[Tt]emp/
+[Oo]bj/
+
+# Builds
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]serSettings/
+
+# Memory-Profiler-Snapshots
+MemoryCaptures/
+
+# ========= Projektdateien der IDE =========
+# VS/Rider/VS Code generieren die aus den Skripten selbst – nie einchecken
+[Ee]xportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# VS Code Cache
+.vscode/
+# Rider Cache
+.idea/
+
+# ========= Unity-Standard-Ordner, falls vorhanden =========
+[Aa]ssets/AssetStoreTools*
+[Aa]ssets/Plugins/Editor/JetBrains*
+
+# ========= Build-Artefakte & Exporte =========
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Crashlytics generierter Ballast
+crashlytics-build.properties
+sysinfo.txt
+
+# ========= Betriebssystem-Streufläche =========
+# Windows Explorer
+[Dd]esktop.ini
+Thumbs.db
+# macOS Finder
+.DS_Store
+# Linux
+*~
