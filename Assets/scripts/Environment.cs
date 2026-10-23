@@ -1,9 +1,9 @@
 
 using UnityEngine;
-using UnityEngine.Video;
 
 public class EnvironmentManager : MonoBehaviour
 {
+    public static EnvironmentManager instance;
     float windChangeSeconds = 5;
     float targetAngle = 60f;
     bool isTurning = false;
@@ -18,11 +18,51 @@ public class EnvironmentManager : MonoBehaviour
     [SerializeField]
     bool constantWind = false;
 
+
+    [Header("Wave Settings")]
+
+
+    [SerializeField]
+    [Range(0.1f, 50f)]
+    float waveLengthA = 10;
+    [SerializeField]
+    [Range(0, 2)]
+    float amplitudeA = 1;
+
+    [SerializeField]
+    [Range(0.1f, 15f)]
+    float waveLengthB = 10;
+    [SerializeField]
+    [Range(0, 1)]
+    float amplitudeB = 1;
+
+
+    [SerializeField]
+    [Range(0.1f, 5f)]
+    float waveLengthC = 10;
+    [SerializeField]
+    [Range(0, 0.5f)]
+    float amplitudeC = 1;
+
+    [SerializeField]
+    float positionWeight = 50;
+
+
+    float offsetA;
+    float offsetB;
+    float offsetC;
+
     public Vector3 wind = Vector3.zero;
+    const float Tau = Mathf.PI * 2;
+
 
     void Start()
     {
+        instance = this;
         UpdateWind();
+        offsetA = Random.Range(0, Tau);
+        offsetB = Random.Range(0, Tau);
+        offsetC = Random.Range(0, Tau);
     }
     // Update is called once per frame
     void Update()
@@ -67,4 +107,15 @@ public class EnvironmentManager : MonoBehaviour
         wind = transform.forward * windStrength;
     }
 
+
+    public float GetWaterLevel(Vector3 position)
+    {
+
+        return GetSine(amplitudeA, waveLengthA, offsetA + position.x * 1 / positionWeight);
+    }
+
+    public float GetSine(float ampl, float wL, float offset)
+    {
+        return Mathf.Sin(offset + Time.time * 1 / wL) * ampl;
+    }
 }

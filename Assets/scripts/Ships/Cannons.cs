@@ -1,7 +1,5 @@
-using System;
+// using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.PlayerLoop;
 
 
 public class Cannons : MonoBehaviour
@@ -28,7 +26,9 @@ public class Cannons : MonoBehaviour
     [SerializeField]
     float zOffsetGeneral = 0;
 
-
+    [Header("Fire Settings")]
+    [SerializeField]
+    float maxFireDisplacementDeg = 1f;
     //0 => left
     // 1 => right
     Vector3[,] cannons;
@@ -71,10 +71,6 @@ public class Cannons : MonoBehaviour
     {
     }
 
-    void OnDrawGizmos()
-    {
-        ShowCannons();
-    }
     // 
     //  ######  ########    ###    ########  ########       
     // ##    ##    ##      ## ##   ##     ##    ##          
@@ -101,33 +97,6 @@ public class Cannons : MonoBehaviour
         }
     }
 
-    // 
-    //  ######   #### ######## ##     ##  #######   ######  
-    // ##    ##   ##       ##  ###   ### ##     ## ##    ## 
-    // ##         ##      ##   #### #### ##     ## ##       
-    // ##   ####  ##     ##    ## ### ## ##     ##  ######  
-    // ##    ##   ##    ##     ##     ## ##     ##       ## 
-    // ##    ##   ##   ##      ##     ## ##     ## ##    ## 
-    //  ######   #### ######## ##     ##  #######   ######  
-    // 
-
-
-    void ShowCannons()
-    {
-        Gizmos.color = Color.indianRed;
-        Gizmos.DrawSphere(new Vector3(0, yOffsetGeneral, zOffsetGeneral), 0.05f);
-        Vector3 startOffset = transform.position + new Vector3(0, yOffsetGeneral, -totalBroadSideWidth * 0.5f + zOffsetGeneral);
-        Gizmos.color = Color.blanchedAlmond;
-        for (int i = 0; i < numBroadSides; i++)
-        {
-            float z = i * cannonSpacing;
-
-            Vector3 right = new Vector3(xOffsetGeneral, 0, z) + startOffset;
-            Vector3 left = new Vector3(-xOffsetGeneral, 0, z) + startOffset;
-            Gizmos.DrawSphere(right, 0.1f);
-            Gizmos.DrawSphere(left, 0.1f);
-        }
-    }
 
     // 
     // ##     ## ########  ########     ###    ######## ######## 
@@ -174,17 +143,23 @@ public class Cannons : MonoBehaviour
         {
             Vector3 cannonPosition = GetCannonWorldSpace(s, i);
             Rigidbody ballBody = Instantiate(cannonBallPrefab, cannonPosition, Quaternion.identity).GetComponent<Rigidbody>();
-            ballBody.AddForce(fireAxis);
+            ballBody.AddForce(RandomizeFireAxis(fireAxis));
         }
 
 
 
     }
 
-    // Vector3 RandomizeForce()
-    // {
+    Vector3 RandomizeFireAxis(Vector3 axis)
+    {
+        float displaceMentAngleDeg = Random.Range(0f, maxFireDisplacementDeg);
 
-    // }
+        float displacementAxisAngleDeg = Random.Range(0f, 360f);
+        Vector3 disPlacementAxis = transform.forward * Mathf.Cos(displacementAxisAngleDeg) + transform.up * Mathf.Sin(displacementAxisAngleDeg);
+        // new Vector2(Mathf.Cos(displacementAxisAngleDeg), Mathf.Sin(displacementAxisAngleDeg));
 
+        Quaternion rotation = Quaternion.AngleAxis(displaceMentAngleDeg, disPlacementAxis);
+        return rotation * axis;
+    }
 
 }
