@@ -10,7 +10,7 @@
                     "name": "Steer",
                     "type": "Value",
                     "id": "13e371b8-e2ac-4b52-bfff-13863234b75c",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Double",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true,
@@ -195,6 +195,57 @@
                     "processors": "",
                     "groups": "",
                     "action": "Fire Direct",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Camera",
+            "id": "745ca484-f929-4c94-ba1a-9a2d7b8ecf5b",
+            "actions": [
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "64107462-aa06-4fbd-ac10-62ace419b949",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "d48db294-f225-43e8-a602-46629fedc897",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Negative",
+                    "id": "111f34af-9caf-4c91-9541-8d7f469b5262",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Positive",
+                    "id": "e9dbce7f-4a47-4391-a256-97a9d03a9f47",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }

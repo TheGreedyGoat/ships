@@ -19,6 +19,7 @@ public class Buoyancy : MonoBehaviour
     float damping = 1f;
     [SerializeField]
     Transform swimmerParent;
+    [SerializeField] float waterLevelOffset = 1.3f;
 
     private Transform[] swimmers = new Transform[4];
 
@@ -99,7 +100,11 @@ public class Buoyancy : MonoBehaviour
 
     }
 
-    float calculateDepth(Vector3 position) => Mathf.Max(0f, EnvironmentManager.instance.GetWaterLevel(position) - position.y);
+    float calculateDepth(Vector3 position)
+    {
+        return Mathf.Max(0f,
+        WaveFunctionManager.instance.GetWaterLevel(position) + waterLevelOffset - position.y);
+    }
 
 
     // 

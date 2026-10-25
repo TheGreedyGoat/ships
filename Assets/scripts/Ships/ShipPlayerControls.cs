@@ -9,13 +9,18 @@ public class ShipPlayerControls : MonoBehaviour
     ShipMovement movement;
     InputAction steerAction;
     InputAction aimAction;
+    InputAction scrollAction;
+
 
     Sail sail;
 
 
     Cannons cannons;
 
+    [SerializeField] CameraMovement cameraControls;
+
     private readonly List<(InputAction action, Action<InputAction.CallbackContext> handler)> _subs = new();
+
 
 
     void Start()
@@ -26,12 +31,12 @@ public class ShipPlayerControls : MonoBehaviour
 
     void OnDestroy()
     {
-        Unsubscribe();
+        UnSubscribe();
     }
 
     void OnDisable()
     {
-        Unsubscribe();
+        UnSubscribe();
     }
     void Subscribe()
     {
@@ -57,8 +62,12 @@ public class ShipPlayerControls : MonoBehaviour
 
         aimAction = actions.FindAction("Aim");
         aimAction.Enable();
+
+        scrollAction = actions.FindAction("Zoom");
+        scrollAction.Enable();
+        scrollAction.performed += cameraControls.onZoom;
     }
-    void Unsubscribe()
+    void UnSubscribe()
     {
         var actions = InputSystem.actions;
 
@@ -74,6 +83,8 @@ public class ShipPlayerControls : MonoBehaviour
         var fire = actions.FindAction("Fire Direct");
         fire.Disable();
         fire.performed -= OnFire;
+
+        scrollAction.Disable();
 
     }
 
