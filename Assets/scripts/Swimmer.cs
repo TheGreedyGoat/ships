@@ -1,0 +1,51 @@
+using Unity.Collections.Tests.CoreCLR.TestJobs;
+using UnityEngine;
+
+public class Swimmer : MonoBehaviour
+{
+    public Rigidbody body;
+    public Buoyancy buoyancy;
+    public float influence = 1;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void FixedUpdate()
+    {
+        var force = CalculateLocalBuoyancy();
+        Debug.DrawLine(transform.position, transform.position + force, Color.cadetBlue);
+        body.AddForceAtPosition(force * Time.fixedDeltaTime, transform.position);
+
+    }
+
+
+    Vector3 CalculateLocalBuoyancy()
+    {
+        float depth = calculateDepth();
+
+        Vector3 force = (depth * buoyancy.buoyancy) * -Physics.gravity;
+
+        Vector3 pointV = body.GetPointVelocity(transform.position);
+        force -= Vector3.up * (pointV.y * buoyancy.damping);
+
+        return force;
+
+    }
+
+
+    float calculateDepth() => Mathf.Max(0f, WaveValues.instance.GetHeight(transform.position) - transform.position.y);
+
+
+    // 
+    //  ######   #### ######## ##     ##  #######   ######  
+    // ##    ##   ##       ##  ###   ### ##     ## ##    ## 
+    // ##         ##      ##   #### #### ##     ## ##       
+    // ##   ####  ##     ##    ## ### ## ##     ##  ######  
+    // ##    ##   ##    ##     ##     ## ##     ##       ## 
+    // ##    ##   ##   ##      ##     ## ##     ## ##    ## 
+    //  ######   #### ######## ##     ##  #######   ######  
+    // 
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position, 0.03f);
+    }
+
+}
