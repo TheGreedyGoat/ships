@@ -339,7 +339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &176216340
 Transform:
   m_ObjectHideFlags: 0
@@ -349,7 +349,7 @@ Transform:
   m_GameObject: {fileID: 176216339}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -386,7 +386,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 3.5
   m_LinearDamping: 0.1
-  m_AngularDamping: 1
+  m_AngularDamping: 2
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -453,7 +453,7 @@ MonoBehaviour:
   swimmerOffsetX: 0.5
   swimmerOffsetY: 0
   swimmerOffsetZ: 1.33
-  buoyancy: 500
+  buoyancy: 250
   damping: 1.5
   swimmerParent: {fileID: 91108995}
 --- !u!1 &330585543
@@ -1281,7 +1281,7 @@ Transform:
   m_GameObject: {fileID: 1196617048}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.307, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1317,7 +1317,7 @@ MonoBehaviour:
   cannonforce: 500
   cannonSpacing: 0.45
   numBroadSides: 4
-  yOffsetGeneral: 0
+  yOffsetGeneral: -0.75
   xOffsetGeneral: 1
   zOffsetGeneral: 0
   maxFireDisplacementDeg: 5
@@ -1891,14 +1891,15 @@ MonoBehaviour:
   m: {fileID: 2100000, guid: c6d508639216dec4c8f3d0213e478624, type: 2}
   value: 0.22
   amplitudes:
-  - 0.254
-  - 0.553
+  - 0.451
+  - 0.199
   frequencies:
   - 0.363
   - 0.419
   directions:
   - {x: 1, y: 0.42, z: 0, w: 0}
   - {x: 0.54, y: 1, z: 0, w: 0}
+  showGizmos: 0
 --- !u!1 &1927206313
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipStatBlock
   lateralFrictionFactor: 1
   longitudalFrictionFactor: 0.5
-  turningAgility: 0.3
-  acceleration: 2.47
+  turningAgility: 0.9
+  acceleration: 3
