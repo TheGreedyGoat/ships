@@ -11,15 +11,14 @@ public class ShipMovement : MonoBehaviour
 
 
     [SerializeField]
-    EnvironmentManager environment;
+    WeatherManager environment;
     [SerializeField]
     float reverseForce = 0.2f;
-    InputAction steerAction;
-
     private Rigidbody rb;
 
     Sail sail;
     int sailState { get => sail.sailState; }
+
 
 
 
@@ -70,7 +69,7 @@ public class ShipMovement : MonoBehaviour
             default:
                 break;
         }
-        Vector3 wind = environment.wind;
+        Vector3 wind = environment.currentWind;
         Vector3 heading = transform.forward;
 
         float relativeAngle = Vector3.SignedAngle(heading, wind, Vector3.up);

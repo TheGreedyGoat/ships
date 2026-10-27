@@ -91,19 +91,30 @@ float mag (float3 v){
 float angle(float3 a, float3 b){
     return acos(dot(a, b)/(mag(a),mag(b)));
 }
+
+float3 multiLerp(float3 a, float3 b, float t, int iterations){
+    float3 value = b;
+    for(int i = 0; i < iterations; i++){
+        value  = lerp(a, value, t);
+    }
+
+    return value;
+}
     
+// float pow
 
 float4 frag (v2f i) : SV_Target {
     float3 normal = -normalize(cross(ddx(i.worldPos), ddy(i.worldPos)));
     Light mainLight = GetMainLight();
-
-    float NdotL = saturate(dot(normal, mainLight.direction));
-    float3 ambient = SampleSH(normal);
-    float3 lighting = ambient + mainLight.color.xyz * NdotL;
     
-    float3 cameraForwardWS = normalize(-UNITY_MATRIX_V[2].xyz);
+    float NdotL =  saturate(dot(normal, mainLight.direction));
+    NdotL = pow(NdotL , 1);
+    float3 ambient = SampleSH(normal);
+    float3 lighting =  mainLight.color.xyz;// * NdotL;
+    
+    // float3 cameraForwardWS = normalize(-UNITY_MATRIX_V[2].xyz);
 
-    float value =angle(normal, cameraForwardWS)/3.14;
-    // return float4(value *value, value, 1, 1);
-    return float4(_BaseColor.rgb* lighting, _BaseColor.a);
+    float3 c = multiLerp(_BaseColor, lighting, NdotL, 10);
+    return float4(c, _BaseColor.a);
 }
+

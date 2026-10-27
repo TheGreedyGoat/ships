@@ -17,23 +17,13 @@
                     "priority": 0
                 },
                 {
-                    "name": "Sails Up",
+                    "name": "Sails Up/Down",
                     "type": "Button",
-                    "id": "c48b0e98-c11a-4b7f-ae42-e03110af9526",
+                    "id": "42d0e5e1-fbba-4727-ab98-e83e3fc72205",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
-                },
-                {
-                    "name": "Sails Down",
-                    "type": "Button",
-                    "id": "77e8c2cd-a8d2-46af-85c7-29a4ca26f9d6",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true,
+                    "initialStateCheck": false,
                     "priority": 0
                 }
             ],
@@ -83,48 +73,37 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "0f82505c-c28d-4469-a951-1d2a0673dafb",
-                    "path": "<Keyboard>/w",
+                    "name": "1D Axis",
+                    "id": "51891991-aa68-4ac0-b625-b0f197e6bcca",
+                    "path": "1DAxis",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Sails Up",
-                    "isComposite": false,
+                    "action": "Sails Up/Down",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "e56fb723-c91d-40b0-9403-ac8409df2b6f",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sails Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "47c42864-8a22-4f5b-8991-7151a210c568",
+                    "name": "negative",
+                    "id": "683760a6-26cf-4282-bf76-2dff3f84a90b",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Sails Down",
+                    "action": "Sails Up/Down",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "606e4292-57ab-4266-ba9d-0fc41e98dc5b",
-                    "path": "<Gamepad>/buttonSouth",
+                    "name": "positive",
+                    "id": "2d48657c-310b-46a8-816f-8541ee26576e",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Sails Down",
+                    "action": "Sails Up/Down",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 }
             ]
         },
@@ -195,6 +174,78 @@
                     "processors": "",
                     "groups": "",
                     "action": "Fire Direct",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Camera",
+            "id": "7b85c1d5-22e3-47fc-ad0b-f7553bc238e9",
+            "actions": [
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "84a06cb0-a928-4e4d-b602-e6f59420e393",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "324bb51a-fd9c-4ccf-9cf6-dafff9051bd5",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c43bcbd1-a74a-4dfc-b990-042736f0e75f",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "8b294345-24dd-47c6-9e24-f294d7e3ef59",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "48f4bc79-d136-4bac-a52d-21bb38917dc0",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "d8c20f52-7959-4b1e-bfc9-c249c4a04f9f",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }

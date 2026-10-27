@@ -18,7 +18,7 @@ public class CanvasTest : MonoBehaviour
     void Update()
     {
 
-        float angle = (environment.eulerAngles - cameraYaw.eulerAngles).y;
+        float angle = Vector3.SignedAngle(WeatherManager.Instance.currentWind, cameraYaw.forward, Vector3.down);//(environment.eulerAngles - cameraYaw.eulerAngles).y;
 
         cTransform.eulerAngles = new Vector3(0, 0, -angle + 180);
     }

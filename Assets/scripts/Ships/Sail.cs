@@ -8,7 +8,7 @@ public class Sail : MonoBehaviour
     public Transform sailTransform;
 
     float localAngleLimitDeg = 80;
-    EnvironmentManager environment;
+    WeatherManager environment;
     [SerializeField]
     Transform ship;
 
@@ -39,7 +39,7 @@ public class Sail : MonoBehaviour
     void Start()
     {
 
-        environment = FindAnyObjectByType<EnvironmentManager>();
+        environment = FindAnyObjectByType<WeatherManager>();
         CalculateRotation();
     }
 
@@ -59,7 +59,7 @@ public class Sail : MonoBehaviour
 
     void CalculateRotation()
     {
-        Vector3 wind = environment.wind;
+        Vector3 wind = environment.currentWind;
         float rawAngle = Vector3.SignedAngle(ship.forward, wind, Vector3.up);
         targetAngle = Mathf.Clamp(rawAngle, -localAngleLimitDeg, localAngleLimitDeg);
 
