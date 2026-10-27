@@ -4,7 +4,7 @@ using UnityCommunity.UnitySingleton;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(ShipMovement))]
+[RequireComponent(typeof(PlayerShip))]
 public class ShipPlayerControls : MonoSingleton<ShipPlayerControls>
 {
     ShipMovement movement;

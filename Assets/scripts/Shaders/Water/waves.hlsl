@@ -22,6 +22,7 @@ float4 UnityObjectToClipPos(float4 vertex)
 }
 float4x4 UNITY_MATRIX_V ;
 float _CTime = 1;
+float _TimeScales[];
 float amplitudes[2];
 float2 directions[2];
 float frequencies[2];
@@ -59,7 +60,7 @@ float3 offset(float3 vertex){
         float2 dir = normalize(directions[i].xy);
         float phase = dot(vertex.xz, dir)
             * frequencies[i]
-            + _CTime;
+            + _CTime / _TimeScales[i];
 
     //    ofs += float3(cosOff * dir.x,sinOff, cosOff * dir.y) * amplitudes[i];
     float cosPhase = cos(phase);

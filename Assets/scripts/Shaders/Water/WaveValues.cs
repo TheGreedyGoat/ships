@@ -1,20 +1,27 @@
 using System;
 using System.Collections.Generic;
+using UnityCommunity.UnitySingleton;
 using UnityEngine;
 using UnityEngine.InputSystem.Composites;
 
-public class WaveValues : MonoBehaviour
+public class WaveValues : MonoSingleton<WaveValues>
 {
-    public static WaveValues instance;
     [SerializeField] Material m;
     [SerializeField] float value;
 
     [SerializeField][Range(0, 1)] float[] amplitudes;
     [SerializeField][Range(0, 1)] float[] frequencies;
+
+    [SerializeField][Range(0, 5)] float[] waveSpeeds;
     [SerializeField] List<Vector4> directions;
 
     [Header("Gizzies")]
     [SerializeField] bool showGizmos = true;
+
+    float GetScaledTime(int index)
+    {
+        return Time.fixedTime / waveSpeeds[index];
+    }
 
     float totalAmplitude
     {
@@ -29,14 +36,12 @@ public class WaveValues : MonoBehaviour
         }
     }
 
-    void Awake()
-    {
-        instance = this;
-    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void FixedUpdate()
     {
         m.SetFloat("_CTime", Time.fixedTime);
+        m.SetFloatArray("_TimeScales", waveSpeeds);
         m.SetFloatArray("amplitudes", amplitudes);
         m.SetFloatArray("frequencies", frequencies);
         m.SetVectorArray("directions", directions);
@@ -56,7 +61,7 @@ public class WaveValues : MonoBehaviour
             Vector2 xzPos = new(worldPosition.x, worldPosition.z);
             float phase = Vector2.Dot(xzPos, dir)
                 * frequencies[i]
-                + Time.fixedTime
+                + GetScaledTime(i)
                 ;
             float cosPhase = Mathf.Cos(phase);
             offset += new Vector3(cosPhase * dir.x, Mathf.Sin(phase) * amplitudes[i], cosPhase * dir.y);

@@ -11,7 +11,8 @@ public class Swimmer : MonoBehaviour
     {
         var force = CalculateLocalBuoyancy();
         Debug.DrawLine(transform.position, transform.position + force, Color.cadetBlue);
-        body.AddForceAtPosition(force * Time.fixedDeltaTime, transform.position);
+        Vector3 offsetCorrection = transform.up * transform.localPosition.y;
+        body.AddForceAtPosition(force * Time.fixedDeltaTime, transform.position - offsetCorrection);
 
     }
 
@@ -30,7 +31,7 @@ public class Swimmer : MonoBehaviour
     }
 
 
-    float calculateDepth() => Mathf.Max(0f, WaveValues.instance.GetHeight(transform.position) - transform.position.y);
+    float calculateDepth() => Mathf.Max(0f, WaveValues.Instance.GetHeight(transform.position) - transform.position.y);
 
 
     // 

@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class WeatherManager : MonoSingleton<WeatherManager>
 {
-    // public static WeatherManager instance;
-    float windChangeSeconds = 5;
+    [SerializeField]
+    [Min(10)]
+    float windChangeSeconds = 120;
     bool isTurning = false;
     float timePassed = 100;
     float minWindSpeed = 0;

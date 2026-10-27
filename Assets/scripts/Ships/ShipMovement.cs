@@ -1,13 +1,9 @@
 using System;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal.Internal;
 
+[RequireComponent(typeof(Ship))]
 public class ShipMovement : MonoBehaviour
 {
-    [SerializeField]
-    ShipStatBlock stats;
 
 
     [SerializeField]
@@ -18,6 +14,8 @@ public class ShipMovement : MonoBehaviour
 
     Sail sail;
     int sailState { get => sail.sailState; }
+
+    ShipStatBlock stats { get => GetComponent<Ship>().stats; }
 
 
 
@@ -39,6 +37,8 @@ public class ShipMovement : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         sail = GetComponentInChildren<Sail>();
+        transform.position = new(transform.position.x, WaveValues.Instance.GetHeight(transform.position), transform.position.z);
+
 
     }
 

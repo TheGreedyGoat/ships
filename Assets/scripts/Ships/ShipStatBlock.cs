@@ -17,4 +17,7 @@ public class ShipStatBlock : ScriptableObject
     [SerializeField]
     public float acceleration = 1f;
 
+    [SerializeField]
+    public float reloadTimeSeconds = 10;
+
 }

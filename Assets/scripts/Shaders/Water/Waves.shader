@@ -11,6 +11,7 @@ Shader "VertexInputSimple" {
             
             HLSLPROGRAM
             float _CTime  =0;
+            float _TimeScales[2];
             float amplitudes[2];
             float4 directions[2];
             float frequencies[2];
