@@ -1,6 +1,9 @@
 Shader "VertexInputSimple" {
     Properties{
         _BaseColor("Base Color", Color) = (1, 1, 1, 1)
+        _FogColor("Fog Color", Color) = (1, 1, 1, 1)
+        _FogStartDist("Fog Start Distance", Range(10, 500)) =10
+        _FogGradientLength("Fog Gradient", Range(1, 500)) = 10
     }
     SubShader {
         Tags { "RenderPipeline" = "UniversalPipeline" }

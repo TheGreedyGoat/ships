@@ -1,4 +1,5 @@
 // source https://github.com/UnityCommunity/UnitySingleton.git
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 namespace UnityCommunity.UnitySingleton
@@ -8,7 +9,8 @@ namespace UnityCommunity.UnitySingleton
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DefaultExecutionOrder(-50)]
-    public abstract class MonoSingleton<T> : MonoBehaviour, ISingleton where T : MonoSingleton<T>
+    public abstract class MonoSingleton<T> : MonoBehaviour, ISingleton
+        where T : MonoSingleton<T>
     {
         #region Fields
 
@@ -20,7 +22,8 @@ namespace UnityCommunity.UnitySingleton
         /// <summary>
         /// The initialization status of the singleton's instance.
         /// </summary>
-        private SingletonInitializationStatus initializationStatus = SingletonInitializationStatus.None;
+        private SingletonInitializationStatus initializationStatus =
+            SingletonInitializationStatus.None;
 
         #endregion
 
@@ -53,10 +56,17 @@ namespace UnityCommunity.UnitySingleton
             }
         }
 
+        public static T InstanceOrNull
+        {
+            get => instance;
+        }
+
         /// <summary>
         /// Gets whether the singleton's instance is initialized.
         /// </summary>
-        public virtual bool IsInitialized => this.initializationStatus == SingletonInitializationStatus.Initialized;
+        public virtual bool IsInitialized =>
+            this.initializationStatus
+            == SingletonInitializationStatus.Initialized;
 
         #endregion
 
@@ -76,7 +86,6 @@ namespace UnityCommunity.UnitySingleton
             }
             else if (instance != this)
             {
-
                 // Destory duplicates
                 if (Application.isPlaying)
                 {
@@ -96,20 +105,11 @@ namespace UnityCommunity.UnitySingleton
         /// <summary>
         /// This gets called once the singleton's instance is created.
         /// </summary>
-        protected virtual void OnMonoSingletonCreated()
-        {
+        protected virtual void OnMonoSingletonCreated() { }
 
-        }
+        protected virtual void OnInitializing() { }
 
-        protected virtual void OnInitializing()
-        {
-
-        }
-
-        protected virtual void OnInitialized()
-        {
-
-        }
+        protected virtual void OnInitialized() { }
 
         #endregion
 
@@ -122,9 +122,11 @@ namespace UnityCommunity.UnitySingleton
                 return;
             }
 
-            this.initializationStatus = SingletonInitializationStatus.Initializing;
+            this.initializationStatus =
+                SingletonInitializationStatus.Initializing;
             OnInitializing();
-            this.initializationStatus = SingletonInitializationStatus.Initialized;
+            this.initializationStatus =
+                SingletonInitializationStatus.Initialized;
             OnInitialized();
         }
 
@@ -145,6 +147,11 @@ namespace UnityCommunity.UnitySingleton
 
             instance.ClearSingleton();
             instance = default(T);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            DestroyInstance();
         }
 
         #endregion

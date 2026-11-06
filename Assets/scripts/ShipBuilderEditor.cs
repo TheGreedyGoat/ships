@@ -12,7 +12,13 @@ public class ShipBuilderEditor : Editor
         ShipBuilder myTarget = (ShipBuilder)target;
         if (GUILayout.Button("Build ship"))
         {
-            myTarget.BuildShip();
+            myTarget.BuildUnbakedShip();
         }
+        if (GUILayout.Button("Show/Hide"))
+        {
+            myTarget.ToggleVisibility();
+        }
+
+
     }
 }

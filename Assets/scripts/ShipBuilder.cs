@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using UnityEngine;
 
@@ -18,13 +20,23 @@ public class ShipBuilder : MonoBehaviour
     [SerializeField] float segmentWidth = 1;
 
 
-    public void BuildShip()
+
+    public void ToggleVisibility()
+    {
+        if(shipParent == null) return;
+        shipParent.gameObject.SetActive(!shipParent.gameObject.activeInHierarchy);
+        // ;
+    } 
+
+
+    public void BuildUnbakedShip()
     {
         if (shipParent != null)
         {
             DestroyImmediate(shipParent.gameObject);
         }
         shipParent = new GameObject("Ship Parent").transform;
+        
 
         Vector3 segmentsStartZ = new(0, 0, segmentWidth * 0.5f);
         Vector3 zOffsetPerSegment = Vector3.forward * segmentWidth;
@@ -79,11 +91,7 @@ public class ShipBuilder : MonoBehaviour
             GameObject front = Instantiate(CannonDeckPrefabs[2], position: currentDeckHeight + zOffsetPerSegment * numCannonsPerDeck, parent: currentDeck, rotation: Quaternion.identity);
             front.name = $"front CannonDeck {i}";
         }
-
-
-
-
-
-
     }
+
+
 }

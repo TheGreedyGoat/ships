@@ -5,16 +5,16 @@ namespace UnityCommunity.UnitySingleton
     {
         None,
         Initializing,
-        Initialized
+        Initialized,
     }
 
     /// <summary>
     /// The singleton implementation for classes.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Singleton<T> : ISingleton where T : Singleton<T>, new()
+    public abstract class Singleton<T> : ISingleton
+        where T : Singleton<T>, new()
     {
-
         #region Fields
 
         /// <summary>
@@ -25,7 +25,8 @@ namespace UnityCommunity.UnitySingleton
         /// <summary>
         /// The initialization status of the singleton's instance.
         /// </summary>
-        private SingletonInitializationStatus initializationStatus = SingletonInitializationStatus.None;
+        private SingletonInitializationStatus initializationStatus =
+            SingletonInitializationStatus.None;
 
         #endregion
 
@@ -59,21 +60,17 @@ namespace UnityCommunity.UnitySingleton
         /// <summary>
         /// Gets whether the singleton's instance is initialized.
         /// </summary>
-        public virtual bool IsInitialized => this.initializationStatus == SingletonInitializationStatus.Initialized;
+        public virtual bool IsInitialized =>
+            this.initializationStatus
+            == SingletonInitializationStatus.Initialized;
 
         #endregion
 
         #region Protected Methods
 
-        protected virtual void OnInitializing()
-        {
+        protected virtual void OnInitializing() { }
 
-        }
-
-        protected virtual void OnInitialized()
-        {
-
-        }
+        protected virtual void OnInitialized() { }
 
         #endregion
 
@@ -86,9 +83,11 @@ namespace UnityCommunity.UnitySingleton
                 return;
             }
 
-            this.initializationStatus = SingletonInitializationStatus.Initializing;
+            this.initializationStatus =
+                SingletonInitializationStatus.Initializing;
             OnInitializing();
-            this.initializationStatus = SingletonInitializationStatus.Initialized;
+            this.initializationStatus =
+                SingletonInitializationStatus.Initialized;
             OnInitialized();
         }
 
@@ -112,7 +111,5 @@ namespace UnityCommunity.UnitySingleton
         }
 
         #endregion
-
     }
-
 }

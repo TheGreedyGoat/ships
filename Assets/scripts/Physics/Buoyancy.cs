@@ -1,4 +1,4 @@
-using Unity.Hierarchy.Editor;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,61 +7,106 @@ public class Buoyancy : MonoBehaviour
     [Header("Swimmer Setup")]
     [SerializeField]
     float swimmerOffsetX = 0.5f;
+
     [SerializeField]
     float swimmerOffsetY = 0;
+
     [SerializeField]
     float swimmerOffsetZ = 1;
 
     [Header("Settings")]
     [SerializeField]
+    public BuoyancySettings settings;
+
     public float buoyancy = .3f;
+
     [SerializeField]
     public float damping = 1f;
-    [SerializeField]
-    Transform swimmerParent;
 
+    // [SerializeField]
+
+    Swimmer[] Swimmers
+    {
+        get => GetComponentsInChildren<Swimmer>();
+    }
+    Transform swimmerParent;
 
     Rigidbody body;
 
-
-    // 
-    //  ######  ########    ###    ########  ######## 
-    // ##    ##    ##      ## ##   ##     ##    ##    
-    // ##          ##     ##   ##  ##     ##    ##    
-    //  ######     ##    ##     ## ########     ##    
-    //       ##    ##    ######### ##   ##      ##    
-    // ##    ##    ##    ##     ## ##    ##     ##    
-    //  ######     ##    ##     ## ##     ##    ##    
-    // 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    //
+    //  ######  ########    ###    ########  ########
+    // ##    ##    ##      ## ##   ##     ##    ##
+    // ##          ##     ##   ##  ##     ##    ##
+    //  ######     ##    ##     ## ########     ##
+    //       ##    ##    ######### ##   ##      ##
+    // ##    ##    ##    ##     ## ##    ##     ##
+    //  ######     ##    ##     ## ##     ##    ##
+    //
     void Start()
     {
         body = GetComponent<Rigidbody>();
-        BuildSwimmers();
     }
-    void BuildSwimmers()
+
+    public void Build(
+        List<Vector3> localPositions,
+        BuoyancySettings settings,
+        List<float> weights = null
+    )
     {
-        // instantiate swimmers
-        Swimmer FL = new GameObject("FL Swimmer").AddComponent<Swimmer>();
-        Swimmer FR = new GameObject("FR Swimmer").AddComponent<Swimmer>();
-        Swimmer BL = new GameObject("BL Swimmer").AddComponent<Swimmer>();
-        Swimmer BR = new GameObject("BR Swimmer").AddComponent<Swimmer>();
-
-        Swimmer[] swimmers = { FL, FR, BL, BR };
-        foreach (Swimmer swimmer in swimmers)
+        this.settings = settings;
+        if (weights != null && weights.Count != localPositions.Count)
         {
-            swimmer.transform.parent = swimmerParent;
-            swimmer.body = body;
-            swimmer.buoyancy = this;
-            swimmer.influence = .25f;
+            throw new System.Exception(
+                $"Weights for Buyoancy swimmers need to be null or same length as localPositions.\nlocalPositions Count: {localPositions.Count}\nweights Count : {weights.Count}"
+            );
         }
-        // locate swimmers
-        FL.transform.localPosition = new Vector3(-swimmerOffsetX, swimmerOffsetY, +swimmerOffsetZ);
-        FR.transform.localPosition = new Vector3(+swimmerOffsetX, swimmerOffsetY, +swimmerOffsetZ);
-        BL.transform.localPosition = new Vector3(-swimmerOffsetX, swimmerOffsetY, -swimmerOffsetZ);
-        BR.transform.localPosition = new Vector3(+swimmerOffsetX, swimmerOffsetY, -swimmerOffsetZ);
+        var swimmerChildren = GetComponentsInChildren<Swimmer>();
+        foreach (var s in swimmerChildren)
+        {
+            if (Application.isPlaying)
+                Destroy(s);
+            else
+                DestroyImmediate(s);
+        }
+        body = body != null ? body : GetComponent<Rigidbody>();
 
+        for (int i = 0; i < localPositions.Count; i++)
+        {
+            var swimmer = new GameObject(
+                $"Swimmer {i}"
+            ).AddComponent<Swimmer>();
+            swimmer.transform.parent = transform;
+            swimmer.body = body;
+            swimmer.transform.localPosition = localPositions[i];
+            swimmer.weight =
+                weights == null ? 1f / localPositions.Count : weights[i];
+            swimmer.buoyancy = this;
+        }
     }
 
+    void FixedUpdate()
+    {
+        SimBuoyancy();
+    }
+
+    void SimBuoyancy()
+    {
+        foreach (var swimmer in Swimmers)
+        {
+            float depth = swimmer.GetDepth();
+            Vector3 force = depth * settings.Force * -Physics.gravity;
+            Vector3 pointV = body.GetPointVelocity(swimmer.transform.position);
+            force -= Vector3.up * (pointV.y * settings.Damping);
+
+            Vector3 forcePoint =
+                body.worldCenterOfMass
+                + (swimmer.transform.position - body.worldCenterOfMass)
+                    * settings.BuoyancyTorqueFactor;
+
+            body.AddForceAtPosition(
+                force * Time.fixedDeltaTime * swimmer.weight,
+                forcePoint
+            );
+        }
+    }
 }

@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15301ac19c238ae40a2f0cfce0f0825e, type: 3}
-  m_Name: DefaultStats
+  m_Name: NSC Ship Stats
   m_EditorClassIdentifier: Assembly-CSharp::ShipStatBlock
-  lateralFrictionFactor: 1
-  longitudalFrictionFactor: 0.5
-  turningAgility: 0.9
-  acceleration: 3
+  lateralFrictionFactor: 1.5
+  longitudalFrictionFactor: 0.3
+  turningAgility: 0.6
+  acceleration: 1.5
+  reloadTimeSeconds: 10

@@ -20,6 +20,8 @@ float4 UnityObjectToClipPos(float4 vertex)
 {
     return vertex;
 }
+float4x4 unity_CameraToWorld;
+float3 _WorldSpaceCameraPos;
 float4x4 UNITY_MATRIX_V ;
 float _CTime = 1;
 float _TimeScales[];
@@ -42,6 +44,10 @@ float frequencies[2];
 const float TAU  = 2* radians(180);
 
 float4 _BaseColor = float4(1,1,1,1);
+float4 _FogColor = float4(1,1,1,1);
+
+float _FogStartDist = 10;
+float _FogGradientLength = 10;
 struct v2f {
     float4 pos : SV_POSITION;
     float3 worldPos : TEXCOORD0;
@@ -93,29 +99,45 @@ float angle(float3 a, float3 b){
     return acos(dot(a, b)/(mag(a),mag(b)));
 }
 
-float3 multiLerp(float3 a, float3 b, float t, int iterations){
-    float3 value = b;
-    for(int i = 0; i < iterations; i++){
-        value  = lerp(a, value, t);
-    }
-
-    return value;
+float inverseLerp(float value, float a,float b){
+    return (value-a) / (b-a);
 }
-    
-// float pow
 
-float4 frag (v2f i) : SV_Target {
-    float3 normal = -normalize(cross(ddx(i.worldPos), ddy(i.worldPos)));
+float remap(float value, float a, float b, float ta, float tb){
+    return lerp(ta, tb, inverseLerp(value, a, b));
+}
+float hashTriangle(uint x)
+{
+    x ^= x >> 16;
+    x *= 0x7feb352du;
+    x ^= x >> 15;
+    x *= 0x846ca68bu;
+    x ^= x >> 16;
+    return (x & 0x00ffffffu) / 16777215.0;
+}
+
+float4 frag (v2f i, uint primitiveID: SV_PrimitiveID) : SV_Target {
+    float3 normal = normalize(cross(ddy(i.worldPos), ddx(i.worldPos)));
+
+    half3 n = normalize(normal);
     Light mainLight = GetMainLight();
     
-    float NdotL =  saturate(dot(normal, mainLight.direction));
-    NdotL = pow(NdotL , 1);
-    float3 ambient = SampleSH(normal);
-    float3 lighting =  mainLight.color.xyz;// * NdotL;
-    
-    // float3 cameraForwardWS = normalize(-UNITY_MATRIX_V[2].xyz);
+    float NdotL =  saturate(dot(n, mainLight.direction));
+    NdotL = pow(NdotL, 3);
+    float3 ambient = SampleSH(n);
 
-    float3 c = multiLerp(_BaseColor, lighting, NdotL, 10);
-    return float4(c, _BaseColor.a);
+    float3 lighting =   NdotL * mainLight.color.xyz ;
+
+    
+    float variation = lerp(15, 20, hashTriangle(primitiveID));
+    float3 forward = mul((float3x3)unity_CameraToWorld, float3(0,0,1));
+    float fogEnd = _FogStartDist + _FogGradientLength;
+    float dist = clamp(mag(i.worldPos - _WorldSpaceCameraPos), _FogStartDist, fogEnd);
+
+    float fogValue = inverseLerp(dist, _FogStartDist, fogEnd);
+    
+    float3 lightedColor = _BaseColor.rgb * lighting * variation;
+
+    return float4( lerp(lightedColor, _FogColor.xyz, fogValue) , _BaseColor.a);
 }
 

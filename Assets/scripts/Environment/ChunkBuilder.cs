@@ -1,37 +1,42 @@
 using System.Collections.Generic;
+using UnityCommunity.UnitySingleton;
 using UnityEngine;
 
-public class ChunkBuilder : MonoBehaviour
+public class ChunkBuilder : MonoSingleton<ChunkBuilder>
 {
-    [SerializeField] float triangleBorder = 1;
-    [SerializeField] int chunkSize = 32;
-    [SerializeField] int viewRangeChunks = 5;
-    [SerializeField] Material waterMaterial;
-    [SerializeField][Tooltip("The object to follow")] Transform playerShip;
+    [SerializeField]
+    float triangleBorder = 1;
+
+    [SerializeField]
+    int chunkSize = 32;
+
+    [SerializeField]
+    int viewRangeChunks = 5;
+
+    [SerializeField]
+    Material waterMaterial;
 
     Mesh chunkMesh;
 
-
     void Awake()
     {
-
         List<Vector3> vertices = new();
         List<int> triangles = new();
         float lsqr = Mathf.Pow(triangleBorder, 2);
         float triHeigt = Mathf.Sqrt(lsqr - lsqr * 0.25f);
-        Vector3[] triVertices = {
-        //         1 __________0,5
-        //           \        /\      
-        //            \      /  \
-        //             \    /    \
-        //              \  /      \
-        //            2,3\/________\ 4
+        Vector3[] triVertices =
+        {
+            //         1 __________0,5
+            //           \        /\
+            //            \      /  \
+            //             \    /    \
+            //              \  /      \
+            //            2,3\/________\ 4
             new(triangleBorder, 0, 0),
             Vector3.zero,
             new(triangleBorder * 0.5f, 0, triHeigt),
-
             new(triangleBorder * 0.5f, 0, triHeigt),
-            new(triangleBorder * 1.5f, 0 , triHeigt),
+            new(triangleBorder * 1.5f, 0, triHeigt),
             new(triangleBorder, 0, 0),
         };
         for (int z = 0; z < chunkSize; z++)
@@ -50,14 +55,13 @@ public class ChunkBuilder : MonoBehaviour
                 {
                     triangles.Add(triIndexOffset + i);
                 }
-
             }
         }
 
         chunkMesh = new Mesh
         {
             vertices = vertices.ToArray(),
-            triangles = triangles.ToArray()
+            triangles = triangles.ToArray(),
         };
         chunkMesh.RecalculateNormals();
     }
@@ -65,12 +69,13 @@ public class ChunkBuilder : MonoBehaviour
     void Start()
     {
         float chunkBorderLength = triangleBorder * chunkSize;
-        float chunkBorderHeight = Mathf.Sqrt((1 - 0.25f) * Mathf.Pow(chunkBorderLength, 2));
+        float chunkBorderHeight = Mathf.Sqrt(
+            (1 - 0.25f) * Mathf.Pow(chunkBorderLength, 2)
+        );
         for (int x = -viewRangeChunks; x <= viewRangeChunks; x++)
         {
             for (int z = -viewRangeChunks; z <= viewRangeChunks; z++)
             {
-
                 float offX = (x + z * 0.5f) * chunkBorderLength;
                 float offZ = z * chunkBorderHeight;
                 GameObject chunk = new GameObject($"Chunk ({x}|{z}))");
@@ -81,7 +86,6 @@ public class ChunkBuilder : MonoBehaviour
 
                 chunk.transform.parent = transform;
                 chunk.transform.localPosition = new(offX, 0, offZ);
-
             }
         }
     }
@@ -89,6 +93,12 @@ public class ChunkBuilder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = new(playerShip.position.x, 0, playerShip.position.z);
+        // if (playerShip == null)
+        //     return;
+        // transform.position = new(
+        //     playerShip.position.x,
+        //     0,
+        //     playerShip.position.z
+        // );
     }
 }

@@ -9,8 +9,8 @@ public class WaveValues : MonoSingleton<WaveValues>
     [SerializeField] Material m;
     [SerializeField] float value;
 
-    [SerializeField][Range(0, 1)] float[] amplitudes;
-    [SerializeField][Range(0, 1)] float[] frequencies;
+    [SerializeField][Range(0, 10)] float[] amplitudes;
+    [SerializeField][Range(0, 10)] float[] frequencies;
 
     [SerializeField][Range(0, 5)] float[] waveSpeeds;
     [SerializeField] List<Vector4> directions;
@@ -88,12 +88,12 @@ public class WaveValues : MonoSingleton<WaveValues>
     {
         if (showGizmos)
         {
-            for (int x = -15; x <= 15; x++)
+            for (int x = -5; x <= 5; x++)
             {
                 for (int z = -5; z <= 5; z++)
                 {
                     Vector3 start = new(x, 0, z);
-                    Vector3 end = new(x, GetHeight(start), z);
+                    Vector3 end = start + GetOffset(new(x, 0, z)); //new(x, GetHeight(start), z);
 
                     Gizmos.color = Color.blue;
                     Gizmos.DrawSphere(end, .1f);

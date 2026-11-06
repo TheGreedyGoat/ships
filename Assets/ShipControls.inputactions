@@ -18,12 +18,12 @@
                 },
                 {
                     "name": "Sails Up/Down",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "42d0e5e1-fbba-4727-ab98-e83e3fc72205",
-                    "expectedControlType": "",
+                    "expectedControlType": "Double",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
                     "priority": 0
                 }
             ],
