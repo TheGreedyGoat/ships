@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipStatBlock
   lateralFrictionFactor: 1.5
   longitudalFrictionFactor: 0.3
-  turningAgility: 0.6
+  turningAgility: 2
   acceleration: 1.5
   reloadTimeSeconds: 10
+  MinPropulsionAngle: 0
