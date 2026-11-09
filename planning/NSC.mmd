@@ -1,0 +1,35 @@
+classDiagram
+    class NPCBehaviour<<abstract>>
+    class NPCState<<abstract>>{
+        +self: Transform
+        +GetDesiredHeading()  Vector3
+    }
+
+    class TargetDependendState<<abstract>>{
+        + target: Transform
+    }
+
+    class NoTargetState{
+
+    }
+
+    class ApproachTarget{}
+    class MatchTargetDirection{}
+
+    class Passive{
+
+    }
+
+    NPCBehaviour o -- NPCState
+    NPCState <-- TargetDependendState
+    NPCState <-- NoTargetState
+
+    TargetDependendState <-- ApproachTarget
+    TargetDependendState <-- MatchTargetDirection
+
+    NoTargetState <-- Passive
+
+    note for NPCBehaviour "Chooses Behaviour based on current state and conditions"
+    note for NPCState "Defines how the NPC behaves rn"
+    note for TargetDependendState "eg Follow, Attack"
+    note for NoTargetState "eg Passive"

@@ -110,6 +110,8 @@ public class ShipMovement : MonoBehaviour
 
     public void Steer(float steerValue)
     {
+        if (rb == null)
+            return;
         rb.AddTorque(
             new Vector3(
                 0,
@@ -122,6 +124,8 @@ public class ShipMovement : MonoBehaviour
 
     float ApplySpeedToTorque(float raw)
     {
+        if (rb == null)
+            return raw;
         float sqrSpeed = rb.linearVelocity.magnitude;
         return raw * (Mathf.Sqrt(sqrSpeed) + 0.1f);
     }

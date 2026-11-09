@@ -4,15 +4,15 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Buoyancy : MonoBehaviour
 {
-    [Header("Swimmer Setup")]
-    [SerializeField]
-    float swimmerOffsetX = 0.5f;
+    // [Header("Swimmer Setup")]
+    // [SerializeField]
+    // float swimmerOffsetX = 0.5f;
 
-    [SerializeField]
-    float swimmerOffsetY = 0;
+    // [SerializeField]
+    // float swimmerOffsetY = 0;
 
-    [SerializeField]
-    float swimmerOffsetZ = 1;
+    // [SerializeField]
+    // float swimmerOffsetZ = 1;
 
     [Header("Settings")]
     [SerializeField]

@@ -1,33 +1,12 @@
 using UnityEngine;
 
-public class NSCShip : MonoBehaviour
+public class NPCCore : MonoBehaviour
 {
-    [SerializeField]
-    Transform targetTransform;
-
     [SerializeField]
     float propulsion = 2;
 
     [SerializeField]
     float yawGain = 0.5f;
-
-    [SerializeField, Range(0, 100)]
-    float DesiredDistance = 0.5f;
-
-    [SerializeField, Range(0, 100)]
-    float DistTolerance = 20;
-
-    float distToTarget =>
-        (transform.position - targetTransform.position).magnitude;
-    bool isWithinTolerance
-    {
-        get
-        {
-            var dist = distToTarget;
-            return dist > DesiredDistance - DistTolerance
-                && dist < DesiredDistance + DistTolerance;
-        }
-    }
 
     [SerializeField]
     Ship ship;
@@ -42,6 +21,8 @@ public class NSCShip : MonoBehaviour
     Sail sail;
 
     Rigidbody body;
+
+    NPCBehaviour Behaviour;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,22 +39,21 @@ public class NSCShip : MonoBehaviour
             sail = GetComponentInChildren<Sail>();
         if (movement == null)
             movement = GetComponentInChildren<ShipMovement>();
+        if (Behaviour == null)
+        {
+            Behaviour = GetComponent<NPCBehaviour>();
+            if (Behaviour == null)
+                return;
+        }
+        var desHeading = Behaviour.GetDesiredHeading();
+        SteerTowardsHeading(desHeading);
 
-        if (isWithinTolerance)
-        {
-            SteerTowards(targetTransform.forward);
-        }
-        else
-        {
-            Vector3 toTargetCenter =
-                targetTransform.position - transform.position;
-            SteerTowards(toTargetCenter.normalized * DesiredDistance);
-        }
+        Debug.DrawLine(transform.position, transform.position + desHeading * 5);
     }
 
-    void SteerTowards(Vector3 target)
+    void SteerTowardsHeading(Vector3 targetHeading)
     {
-        Vector2 toTarged2D = new(target.x, target.z);
+        Vector2 toTarged2D = new(targetHeading.x, targetHeading.z);
         Vector2 forward = new(transform.forward.x, transform.forward.z);
 
         float deltaAngle = Vector2.SignedAngle(forward, toTarged2D);
@@ -87,12 +67,10 @@ public class NSCShip : MonoBehaviour
             maxYawSpeed
         );
 
-        float yawError = (desiredYawSpeed - currentYawSpeed);
+        float yawError = desiredYawSpeed - currentYawSpeed;
 
         float steerValue = Mathf.Clamp(yawError / rateErrorForFullSteer, -1, 1);
         Steer(steerValue);
-
-        Debug.DrawLine(transform.position, transform.position + target);
     }
 
     void SetSailState(int state)
@@ -103,22 +81,5 @@ public class NSCShip : MonoBehaviour
     void Steer(float direction)
     {
         movement.Steer(direction);
-    }
-
-    void OnDrawGizmos()
-    {
-        if (targetTransform == null)
-            return;
-
-        Gizmos.color = isWithinTolerance ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(
-            targetTransform.position,
-            DesiredDistance - DistTolerance
-        );
-        Gizmos.DrawWireSphere(targetTransform.position, DesiredDistance);
-        Gizmos.DrawWireSphere(
-            targetTransform.position,
-            DesiredDistance + DistTolerance
-        );
     }
 }

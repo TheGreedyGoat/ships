@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Ship : MonoBehaviour
@@ -68,7 +66,8 @@ public class Ship : MonoBehaviour
                 comp == null
                 || comp is Transform
                 || comp is Rigidbody
-                || comp is NSCShip
+                || comp is NPCCore
+                || comp is NPCBehaviour
                 || comp == this
             )
                 continue;

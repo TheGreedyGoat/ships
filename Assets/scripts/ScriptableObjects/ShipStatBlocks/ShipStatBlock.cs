@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -30,4 +31,24 @@ public class ShipStatBlock : ScriptableObject
     [SerializeField]
     [Range(0, 30)]
     public float MinPropulsionAngle = 15;
+
+    public ShipStatBlock CopyWith(
+        float? lateralFrictionFactor = null,
+        float? longitudalFrictionFactor = null,
+        float? turningAgility = null,
+        float? acceleration = null,
+        float? reloadTimeSeconds = null,
+        float? MinPropulsionAngle = null
+    ) =>
+        new()
+        {
+            lateralFrictionFactor =
+                lateralFrictionFactor ?? this.lateralFrictionFactor,
+            longitudalFrictionFactor =
+                longitudalFrictionFactor ?? this.longitudalFrictionFactor,
+            turningAgility = turningAgility ?? this.turningAgility,
+            acceleration = acceleration ?? this.acceleration,
+            reloadTimeSeconds = reloadTimeSeconds ?? this.reloadTimeSeconds,
+            MinPropulsionAngle = MinPropulsionAngle ?? this.MinPropulsionAngle,
+        };
 }
