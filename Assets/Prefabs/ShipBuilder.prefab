@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &365998533551782288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7691671160049499571}
+  - component: {fileID: 5774498090278336134}
+  m_Layer: 0
+  m_Name: ShipBuilder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7691671160049499571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365998533551782288}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5774498090278336134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365998533551782288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06e9d71733210bd4bb741a83a0951647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shipbaker
+  topPrefabs:
+  - {fileID: 4046588613765588146, guid: 4bd68fb641f89574e9cffb690bc46893, type: 3}
+  - {fileID: 3796928217317660442, guid: 2cc766e526e8eb84d93f5c16c9bdb5ff, type: 3}
+  - {fileID: 6833508571193909369, guid: 2f39ecc3486b4b24ca789fdcf311b594, type: 3}
+  CannonDeckPrefabs:
+  - {fileID: 7578435845361464289, guid: 5853d2d83551dad4ab19868b37175d65, type: 3}
+  - {fileID: 4120596184661307696, guid: 9e7895e7c8399b34697f4e8455a942a6, type: 3}
+  - {fileID: 2907009750475452185, guid: f290284a22fac1d429e8f43667daef6a, type: 3}
+  bottomPrefabs:
+  - {fileID: 4241906290719104911, guid: a8011e42f229e164090c0c1735fddc6c, type: 3}
+  - {fileID: 2899392352536261858, guid: fd514b6f47c8b5a49afb50e6973dc599, type: 3}
+  - {fileID: 6267122855414873870, guid: 9189cbe5ad022f94690a20d4314318ec, type: 3}
+  CannonPrefab: {fileID: 5245441234068708849, guid: 4771ca914b2d14442a0fa002148abb65, type: 3}
+  cannonDecks: 5
+  cannonColumns: 10
+  topCenterExtraScale: 0
+  shipPrefab: {fileID: 0}
+  materials:
+  - {fileID: 2100000, guid: 3516029d9b9fd5a4b86d599795e1137a, type: 2}
+  - {fileID: 2100000, guid: cfffa8e76f4bca041a93d8b89fa96614, type: 2}
+  buoyancySettings: {fileID: 11400000, guid: 045a5f702ffad1c49afb4627aad3ed48, type: 2}

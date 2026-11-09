@@ -1,62 +1,65 @@
 using System;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal.Internal;
 
+[RequireComponent(typeof(Ship))]
 public class ShipMovement : MonoBehaviour
 {
-    [SerializeField]
-    ShipStatBlock stats;
+    // [SerializeField]
+    WeatherManager environment => WeatherManager.Instance;
 
-
-    [SerializeField]
-    EnvironmentManager environment;
     [SerializeField]
     float reverseForce = 0.2f;
-    InputAction steerAction;
-
     private Rigidbody rb;
 
     Sail sail;
-    int sailState { get => sail.sailState; }
+    float sailState
+    {
+        get => sail.sailState;
+    }
 
+    ShipStatBlock stats
+    {
+        get => GetComponent<Ship>().stats;
+    }
 
+    float minPropulsionAngle => stats.MinPropulsionAngle;
 
     [Header("Debug")]
     // Debug
     [SerializeField]
     float vectorScaleFactor = 100;
-    [SerializeField]
-    private Vector3 totalForce;
 
     [SerializeField]
-    [Range(5, 30)]
-    float minPropulsionAngle = 15;
+    private Vector3 totalForce;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
         rb = GetComponent<Rigidbody>();
         sail = GetComponentInChildren<Sail>();
-
+        transform.position = new(
+            transform.position.x,
+            WaveValues.Instance.GetHeight(transform.position),
+            transform.position.z
+        );
     }
-
 
     void FixedUpdate()
     {
+        if (rb == null)
+            return;
         totalForce = Vector3.zero;
         Friction();
         Move();
 
-        Debug.DrawLine(transform.position, transform.position + totalForce * 3, Color.crimson);
+        Debug.DrawLine(
+            transform.position,
+            transform.position + totalForce * 3,
+            Color.crimson
+        );
 
         DrawPropulsionCircle();
-
     }
-
-
 
     void Move()
     {
@@ -70,35 +73,51 @@ public class ShipMovement : MonoBehaviour
             default:
                 break;
         }
-        Vector3 wind = environment.wind;
+        Vector3 wind = environment.currentWind;
         Vector3 heading = transform.forward;
 
         float relativeAngle = Vector3.SignedAngle(heading, wind, Vector3.up);
-        float perc = Mathf.Clamp(Mathf.InverseLerp(a: 180f, b: minPropulsionAngle, value: relativeAngle), 0.0f, 1.0f);
-        Vector3 accelerationForce = heading * sail.sailFactor * stats.acceleration * perc;
+        float perc = Mathf.Pow(
+            Mathf.Clamp(
+                Mathf.InverseLerp(
+                    a: 180f,
+                    b: minPropulsionAngle,
+                    value: relativeAngle
+                ),
+                0.0f,
+                1.0f
+            ),
+            1 / 3
+        );
+        Vector3 accelerationForce =
+            heading * sail.sailFactor * stats.acceleration * perc;
 
         AddForce(accelerationForce);
     }
 
-
-
     void Friction()
     {
-
         Vector3 velocity = rb.linearVelocity;
         Vector3 heading = transform.forward;
         Vector3 projection = Vector3.Project(velocity, heading);
-        Vector3 lateralForce = -(velocity - projection) * stats.lateralFrictionFactor;
+        Vector3 lateralForce =
+            -(velocity - projection) * stats.lateralFrictionFactor;
+
         Vector3 longitudalForce = -projection * stats.longitudalFrictionFactor;
 
         AddForce(lateralForce + longitudalForce);
-        Debug.DrawLine(transform.position, transform.position + velocity * vectorScaleFactor, Color.red);
     }
 
     public void Steer(float steerValue)
     {
-        rb.AddTorque(new Vector3(0, ApplySpeedToTorque(steerValue * stats.turningAgility) * (1.5f - sail.sailFactor), 0));
-
+        rb.AddTorque(
+            new Vector3(
+                0,
+                ApplySpeedToTorque(steerValue * stats.turningAgility)
+                    * (1f - sail.sailFactor * 0.25f),
+                0
+            )
+        );
     }
 
     float ApplySpeedToTorque(float raw)
@@ -113,27 +132,38 @@ public class ShipMovement : MonoBehaviour
         rb.AddForce(force);
     }
 
-
     void DrawPropulsionCircle()
     {
         float radius = 5;
         float totaldegrees = 360f - 2 * minPropulsionAngle;
         float singleStep = totaldegrees / 30;
 
-
         float angleOffset = 90 - transform.eulerAngles.y;
 
-
-        for (float a = minPropulsionAngle + angleOffset; a <= 360 - minPropulsionAngle + angleOffset; a += singleStep)
+        for (
+            float a = minPropulsionAngle + angleOffset;
+            a <= 360 - minPropulsionAngle + angleOffset;
+            a += singleStep
+        )
         {
-            Vector3 start = transform.position
-            + radius * new Vector3(Mathf.Cos(a / 180 * Mathf.PI), 0, Mathf.Sin(a / 180 * Mathf.PI));
+            Vector3 start =
+                transform.position
+                + radius
+                    * new Vector3(
+                        Mathf.Cos(a / 180 * Mathf.PI),
+                        0,
+                        Mathf.Sin(a / 180 * Mathf.PI)
+                    );
 
-            Vector3 end = transform.position
-            + radius * new Vector3(Mathf.Cos((a + singleStep) / 180 * Mathf.PI), 0, Mathf.Sin((a + singleStep) / 180 * Mathf.PI));
+            Vector3 end =
+                transform.position
+                + radius
+                    * new Vector3(
+                        Mathf.Cos((a + singleStep) / 180 * Mathf.PI),
+                        0,
+                        Mathf.Sin((a + singleStep) / 180 * Mathf.PI)
+                    );
             Debug.DrawLine(start, end, Color.red);
-
         }
     }
-
 }

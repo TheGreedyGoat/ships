@@ -1,0 +1,17 @@
+classDiagram
+ class Ship
+ class Buoyancy
+ class Swimmer
+ class ShipBody
+ class Hull
+ class Sails
+ class BroadSide
+
+
+ Ship "1"o--"1" Buoyancy
+ Ship "1"*--"1" ShipBody
+ Buoyancy "1"o--"n" Swimmer
+
+ ShipBody *-- Hull
+ ShipBody *-- Sails
+ ShipBody "1"*--"2" BroadSide
