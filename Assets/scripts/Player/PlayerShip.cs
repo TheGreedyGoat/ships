@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityCommunity.UnitySingleton;
+using UnityEditor.XR;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,7 +29,8 @@ class Player : MonoSingleton<Player>
 
     Sail sail => ship.gameObject.GetComponentInChildren<Sail>();
 
-    Cannons2 cannons => ship.gameObject.GetComponentInChildren<Cannons2>();
+    ShipCannons cannons =>
+        ship.gameObject.GetComponentInChildren<ShipCannons>();
 
     CameraMovement cam => CameraMovement.Instance;
     bool invertAxisY = true;
@@ -37,6 +39,7 @@ class Player : MonoSingleton<Player>
     {
         OnPerformed,
         WhilePressed,
+        OnPerfomedAndReleased,
     }
 
     enum UpdateMethod
@@ -78,6 +81,12 @@ class Player : MonoSingleton<Player>
             binding.PerformedHandler = _ => callback(action);
             action.performed += binding.PerformedHandler;
         }
+        if (mode == InputMode.OnPerfomedAndReleased)
+        {
+            binding.PerformedHandler = _ => callback(action);
+            action.performed += binding.PerformedHandler;
+            action.canceled += binding.PerformedHandler;
+        }
 
         bindings.Add(binding);
     }
@@ -85,9 +94,6 @@ class Player : MonoSingleton<Player>
     void SubscribeActions()
     {
         var actions = InputSystem.actions;
-        // movement = GetComponent<ShipMovement>();
-        // cannons = GetComponentInChildren<Cannons>();
-
         var steer = actions.FindAction("Steer");
         Bind(steer, InputMode.WhilePressed, UpdateMethod.Fixed, OnSteer);
 
@@ -102,27 +108,41 @@ class Player : MonoSingleton<Player>
         var fire = actions.FindAction("Fire Direct");
         Bind(fire, InputMode.OnPerformed, UpdateMethod.Default, OnFire);
 
-        var aim = actions.FindAction("Aim");
-        Bind(aim, InputMode.WhilePressed, UpdateMethod.Default, OnAim);
-
-        var rotateCam = actions.FindAction("Rotate");
+        var aimL = actions.FindAction("AimLeft");
         Bind(
-            rotateCam,
+            aimL,
+            InputMode.OnPerfomedAndReleased,
+            UpdateMethod.Default,
+            SetAimLeft
+        );
+        var aimR = actions.FindAction("AimRight");
+        Bind(
+            aimR,
+            InputMode.OnPerfomedAndReleased,
+            UpdateMethod.Default,
+            SetAimRight
+        );
+
+        var mouseMoved = actions.FindAction("Rotate");
+        Bind(
+            mouseMoved,
             InputMode.OnPerformed,
             UpdateMethod.Default,
             OnMouseDelta
         );
 
+        // var cameraMode = actions.FindAction("CameraMode");
+        // Bind(
+        //     cameraMode,
+        //     InputMode.OnPerfomedAndReleased,
+        //     UpdateMethod.Default,
+        //     OnToggleCamMode
+        // );
+
         var zoom = actions.FindAction("Zoom");
 
         Bind(zoom, InputMode.OnPerformed, UpdateMethod.Default, OnScroll);
     }
-
-    // void Start()
-    // {
-
-    //     SubscribeActions();
-    // }
 
     //
     // ##     ## ########  ########     ###    ######## ########       ## ######## #### ##     ## ######## ########  ##     ## ########  ########     ###    ######## ########
@@ -144,6 +164,14 @@ class Player : MonoSingleton<Player>
                 && binding.Action.IsPressed()
             )
                 binding.Callback(binding.Action);
+        }
+        if (aimLeft)
+        {
+            cannons.ShowAim(0);
+        }
+        if (aimRight)
+        {
+            cannons.ShowAim(1);
         }
     }
 
@@ -180,11 +208,20 @@ class Player : MonoSingleton<Player>
         cannons.FireNextDeck(Mathf.RoundToInt(value));
     }
 
-    void OnAim(InputAction _)
+    bool aimLeft = false,
+        aimRight = false;
+    bool aiming => aimLeft || aimRight;
+
+    void SetAimLeft(InputAction action)
     {
-        if (ship == null)
-            return;
-        cannons.ShowAim();
+        aimLeft = action.IsPressed();
+        cannons.SetAimingMeshVisibility(0, aimLeft);
+    }
+
+    void SetAimRight(InputAction action)
+    {
+        aimRight = action.IsPressed();
+        cannons.SetAimingMeshVisibility(1, aimRight);
     }
 
     //
@@ -230,21 +267,37 @@ class Player : MonoSingleton<Player>
     }
 
     //
-    //  ######     ###    ##     ##
-    // ##    ##   ## ##   ###   ###
-    // ##        ##   ##  #### ####
-    // ##       ##     ## ## ### ##
-    // ##       ######### ##     ##
-    // ##    ## ##     ## ##     ##
-    //  ######  ##     ## ##     ##
+    // ##     ##  #######  ##     ##  ######  ########
+    // ###   ### ##     ## ##     ## ##    ## ##
+    // #### #### ##     ## ##     ## ##       ##
+    // ## ### ## ##     ## ##     ##  ######  ######
+    // ##     ## ##     ## ##     ##       ## ##
+    // ##     ## ##     ## ##     ## ##    ## ##
+    // ##     ##  #######   #######   ######  ########
     //
 
     void OnMouseDelta(InputAction action)
     {
         if (ship == null)
             return;
-        var value = action.ReadValue<Vector2>();
-        value.y *= invertAxisY ? -1 : 1;
+
+        var valueRaw = action.ReadValue<Vector2>();
+        Vector2 value;
+        // value.y *= invertAxisY ? -1 : 1;
+        if (aiming)
+        {
+            value = valueRaw * GlobalValues.Instance.AimingSensitivity;
+            value.y *= GlobalValues.Instance.InvertCannonPitch ? -1 : 1;
+            if (aimLeft)
+                cannons.Aim(value.y, 0);
+            if (aimRight)
+                cannons.Aim(value.y, 1);
+
+            // lock pitch for aiming
+            valueRaw.y = 0;
+        }
+        value = valueRaw * GlobalValues.Instance.CameraSensitivity;
+        value.y *= GlobalValues.Instance.InvertCameraPitch ? -1 : 1;
         cam.RecieveRotationInput(value);
     }
 

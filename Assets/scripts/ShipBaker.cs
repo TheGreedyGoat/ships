@@ -326,32 +326,6 @@ public class Shipbaker : MonoSingleton<Shipbaker>
     {
         lowestZ = mesh.bounds.min.z;
         return mesh.bounds.size;
-        if (mesh.vertexCount == 0)
-        {
-            lowestZ = 0;
-            return Vector3.zero;
-        }
-        float lowestX = float.PositiveInfinity;
-        float lowestY = float.PositiveInfinity;
-        lowestZ = float.PositiveInfinity;
-
-        float highestX = float.NegativeInfinity;
-        float highestY = float.NegativeInfinity;
-        float highestZ = float.NegativeInfinity;
-
-        for (int i = 0; i < mesh.vertices.Length; i++)
-        {
-            var vertex = mesh.vertices[i];
-            lowestX = Mathf.Min(lowestX, vertex.x);
-            lowestY = Mathf.Min(lowestY, vertex.y);
-            lowestZ = Mathf.Min(lowestZ, vertex.z);
-
-            highestX = Mathf.Max(highestX, vertex.x);
-            highestY = Mathf.Max(highestY, vertex.y);
-            highestZ = Mathf.Max(highestZ, vertex.z);
-        }
-        return new Vector3(highestX, highestY, highestZ)
-            - new Vector3(lowestX, lowestY, lowestZ);
     }
 
     public void BakeShip(Ship ship)
@@ -407,6 +381,15 @@ public class Shipbaker : MonoSingleton<Shipbaker>
         Buoyancy buoyancy = shipBodyObject.AddComponent<Buoyancy>();
         buoyancy.Build(swimmerPositions, buoyancySettings);
 
+        //
+        //  ######     ###    ##    ## ##    ##  #######  ##    ##  ######
+        // ##    ##   ## ##   ###   ## ###   ## ##     ## ###   ## ##    ##
+        // ##        ##   ##  ####  ## ####  ## ##     ## ####  ## ##
+        // ##       ##     ## ## ## ## ## ## ## ##     ## ## ## ##  ######
+        // ##       ######### ##  #### ##  #### ##     ## ##  ####       ##
+        // ##    ## ##     ## ##   ### ##   ### ##     ## ##   ### ##    ##
+        //  ######  ##     ## ##    ## ##    ##  #######  ##    ##  ######
+        //
         var cannonPositions = CannonsByBroadSideAndDeck(
             cannonDecks,
             cannonColumns
@@ -414,9 +397,48 @@ public class Shipbaker : MonoSingleton<Shipbaker>
         var cannons = new GameObject() { name = "Cannons" };
         cannons.transform.parent = ship.transform;
         cannons.transform.localPosition = Vector3.zero;
+        cannons.transform.localRotation = Quaternion.identity;
 
-        var cMono = cannons.AddComponent<Cannons2>();
-        cMono.Setup(cannonPositions, CannonPrefab, shipBodyObject.transform);
+        var cMono = cannons.AddComponent<ShipCannons>();
+        var leftAim = new GameObject("Left Aim");
+        var rightAim = new GameObject("Right Aim");
+        leftAim.transform.parent = cMono.transform;
+        rightAim.transform.parent = cMono.transform;
+
+        leftAim.transform.localPosition =
+            Vector3.zero - Vector3.right * shipDimensions.x * 0.5f;
+        rightAim.transform.localPosition =
+            Vector3.zero + Vector3.right * shipDimensions.x * 0.5f;
+
+        leftAim.transform.localRotation = Quaternion.identity;
+        rightAim.transform.localRotation = Quaternion.identity;
+
+        var leftFilter = leftAim.AddComponent<MeshFilter>();
+        var rightFilter = rightAim.AddComponent<MeshFilter>();
+        var leftRend = leftAim.AddComponent<MeshRenderer>();
+        leftRend.enabled = false;
+        var rightRend = rightAim.AddComponent<MeshRenderer>();
+        rightRend.enabled = false;
+
+        leftRend.material = GlobalValues.Instance.AimMeshMaterial;
+        rightRend.material = GlobalValues.Instance.AimMeshMaterial;
+
+        cMono.Setup(
+            cannonPositions,
+            CannonPrefab,
+            shipBodyObject.transform,
+            leftFilter,
+            rightFilter
+        );
+        //
+        //  ######     ###    #### ##
+        // ##    ##   ## ##    ##  ##
+        // ##        ##   ##   ##  ##
+        //  ######  ##     ##  ##  ##
+        //       ## #########  ##  ##
+        // ##    ## ##     ##  ##  ##
+        //  ######  ##     ## #### ########
+        //
 
         var sail = Instantiate(
             sailPrefab,
@@ -434,11 +456,12 @@ public class Shipbaker : MonoSingleton<Shipbaker>
         body.automaticInertiaTensor = true;
         var autoTensor = body.inertiaTensor;
         body.automaticInertiaTensor = false;
-        body.inertiaTensor = new(
-            autoTensor.x * YawInertiaTensorFactor,
-            autoTensor.y * YawInertiaTensorFactor,
-            autoTensor.z
-        );
+        body.inertiaTensor =
+            new Vector3(
+                autoTensor.x * YawInertiaTensorFactor,
+                autoTensor.y * YawInertiaTensorFactor,
+                autoTensor.z
+            ) / body.mass;
     }
 
     string GetShipName(int cannonDecks, int cannonColumns) =>

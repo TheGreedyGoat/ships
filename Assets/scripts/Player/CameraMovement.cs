@@ -38,6 +38,15 @@ public class CameraMovement : MonoSingleton<CameraMovement>
     [SerializeField]
     float pitchRotationSpeed = 1;
 
+    public float CurrentYaw => yaw.eulerAngles.y;
+
+    public float CurrentPitch => pitch.localEulerAngles.x;
+
+    public Vector3 CurrentEulers
+    {
+        get { return new(CurrentPitch, CurrentYaw, 0); }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Awake()
     {
@@ -51,11 +60,8 @@ public class CameraMovement : MonoSingleton<CameraMovement>
         var player = Player.Instance.ship;
         if (player == null)
             return;
-        transform.position = new(
-            player.transform.position.x,
-            player.CannonDecks,
-            player.transform.position.z
-        );
+        transform.position =
+            player.transform.position + new Vector3(0, player.CannonDecks, 0);
     }
 
     public void RecieveRotationInput(Vector2 value)

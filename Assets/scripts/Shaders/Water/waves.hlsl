@@ -24,10 +24,11 @@ float4x4 unity_CameraToWorld;
 float3 _WorldSpaceCameraPos;
 float4x4 UNITY_MATRIX_V ;
 float _CTime = 1;
-float _TimeScales[];
-float amplitudes[2];
-float2 directions[2];
-float frequencies[2];
+int _WaveCount;
+float _Speeds[];
+float _Amplitudes[];
+float4 _Directions[];
+float _WaveLengths[];
 
 #endif
 
@@ -62,15 +63,19 @@ struct Attributes
 
 float3 offset(float3 vertex){
     float3 ofs = float3(0,0,0);
-    for(int i = 0; i < 2; i++){
-        float2 dir = normalize(directions[i].xy);
-        float phase = dot(vertex.xz, dir)
-            * frequencies[i]
-            + _CTime / _TimeScales[i];
+    for(int i = 0; i < 100; i++){
+        if(i >= _WaveCount){
+            break;
+        }
+        float2 dir = normalize(_Directions[i].xy);
+        float phase = 
+        dot(vertex.xz, dir)
+            /_WaveLengths[i]
+            + _CTime * _Speeds[i];
 
     //    ofs += float3(cosOff * dir.x,sinOff, cosOff * dir.y) * amplitudes[i];
     float cosPhase = cos(phase);
-    ofs += float3( cosPhase * dir.x,sin(phase)* amplitudes[i], cosPhase * dir.y);
+    ofs += float3( cosPhase * dir.x,sin(phase)* _Amplitudes[i], cosPhase * dir.y);
     }
     return ofs;
 }

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuoyancySettings
   Force: 160
   Damping: 40
-  YOffset: 0
+  YOffset: -1
   BuoyancyTorqueFactor: 0.755

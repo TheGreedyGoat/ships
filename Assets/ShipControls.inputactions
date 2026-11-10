@@ -112,13 +112,23 @@
             "id": "225787ca-1285-467e-8d9d-f9eb889b9413",
             "actions": [
                 {
-                    "name": "Aim",
+                    "name": "AimLeft",
                     "type": "Button",
                     "id": "1767ccf4-bbdd-44c9-8446-ff44718815b6",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "AimRight",
+                    "type": "Button",
+                    "id": "04e35c0b-2991-48ea-a7e0-0a069dc3e1de",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
                     "priority": 0
                 },
                 {
@@ -135,12 +145,12 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "5117ac24-db78-44ef-a9fe-410fae2fa73e",
-                    "path": "<Keyboard>/space",
+                    "id": "f59b5e57-2b98-44b0-900f-73a92352896f",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aim",
+                    "action": "AimLeft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -176,6 +186,17 @@
                     "action": "Fire Direct",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "3539ba09-c429-44c5-9dc2-e9d289d73fab",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AimRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -201,6 +222,16 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "CameraMode",
+                    "type": "Button",
+                    "id": "d6fdbdfd-3338-4f25-bc26-6a030379b058",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
                     "priority": 0
                 }
             ],
@@ -248,6 +279,17 @@
                     "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "6ad46740-bebe-47de-9ff4-56fdd9825107",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

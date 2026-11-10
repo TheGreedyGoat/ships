@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
     [SerializeField]
     public ShipStatBlock stats;
+
+    public CannonStats CannonStats;
 
     [SerializeField]
     public int CannonDecks;
@@ -28,6 +31,12 @@ public class Ship : MonoBehaviour
         {
             SetPlayer();
         }
+
+        transform.position = new(
+            transform.position.x,
+            WaveField.Instance.GetHeight(transform.position),
+            transform.position.z
+        );
     }
 
     public void SetPlayer()
@@ -45,6 +54,10 @@ public class Ship : MonoBehaviour
 
         Shipbaker.Instance.BakeShip(this);
         gameObject.AddComponent<ShipMovement>();
+        if (CannonStats == null)
+        {
+            CannonStats = GlobalValues.Instance.DefaultCannonStats;
+        }
 
         isBaked = true;
     }

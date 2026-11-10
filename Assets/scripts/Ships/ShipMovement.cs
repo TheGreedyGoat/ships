@@ -39,7 +39,7 @@ public class ShipMovement : MonoBehaviour
         sail = GetComponentInChildren<Sail>();
         transform.position = new(
             transform.position.x,
-            WaveValues.Instance.GetHeight(transform.position),
+            WaveField.Instance.GetHeight(transform.position),
             transform.position.z
         );
     }
@@ -133,7 +133,7 @@ public class ShipMovement : MonoBehaviour
     void AddForce(Vector3 force)
     {
         totalForce += force;
-        rb.AddForce(force);
+        rb.AddForce(force, ForceMode.Acceleration);
     }
 
     void DrawPropulsionCircle()

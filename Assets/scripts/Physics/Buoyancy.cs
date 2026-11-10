@@ -105,7 +105,8 @@ public class Buoyancy : MonoBehaviour
 
             body.AddForceAtPosition(
                 force * Time.fixedDeltaTime * swimmer.weight,
-                forcePoint
+                forcePoint,
+                ForceMode.Acceleration
             );
         }
     }

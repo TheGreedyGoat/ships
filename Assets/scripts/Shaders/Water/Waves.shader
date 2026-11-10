@@ -10,14 +10,14 @@ Shader "VertexInputSimple" {
 
         Pass {
             Tags { "LightMode" = "UniversalForward" }
-            // _CTime("Time", float)
             
             HLSLPROGRAM
+            int _WaveCount;
             float _CTime  =0;
-            float _TimeScales[2];
-            float amplitudes[2];
-            float4 directions[2];
-            float frequencies[2];
+            float _Speeds[100];
+            float _Amplitudes[100];
+            float4 _Directions[100];
+            float _WaveLengths[100];
 
 
             #pragma vertex vert

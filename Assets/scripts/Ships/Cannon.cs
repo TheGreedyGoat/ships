@@ -1,31 +1,26 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Cannon : MonoBehaviour
 {
-    //! Should probably be handled groupwise
-    float _reload = 0;
-    public float ReloadLeft => _reload;
-
-    bool isReloading => ReloadLeft > 0;
+    Vector3 directionOfFire = new Vector3(1, 0, 0);
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() { }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (isReloading)
-        {
-            _reload -= Time.deltaTime;
-        }
-    }
+    void Update() { }
 
-    public void Fire()
+    public void Fire(Rigidbody prefab, float force)
     {
-        print(isReloading ? "Im Reloading!" : "Fire!");
-        if (!isReloading)
-        {
-            _reload = 5;
-        }
+        Vector3 fireAxis = transform.TransformDirection(directionOfFire);
+        var ball = Instantiate(
+            prefab,
+            transform.position + fireAxis * 0.2f,
+            Quaternion.identity
+        );
+        ball.linearVelocity = fireAxis * force;
+        // AddForce(fireAxis * force, ForceMode.Acceleration);
     }
 }

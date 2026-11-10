@@ -5,9 +5,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class CannonBall : MonoBehaviour
 {
-
-    static float cannonBallSpeed = 5;
-
     float lifeTime = 0;
 
     void Update()
@@ -22,11 +19,12 @@ public class CannonBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        var other = collision.gameObject;
-        if (other.TryGetComponent<CannonBall>(out var _)) { return; }
-        print(other.name);
-        Destroy(gameObject);
+        // var other = collision.gameObject;
+        // if (other.TryGetComponent<CannonBall>(out var _))
+        // {
+        //     return;
+        // }
+        // print(other.name);
+        // Destroy(gameObject);
     }
-
-
 }

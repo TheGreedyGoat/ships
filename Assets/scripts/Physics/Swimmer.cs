@@ -9,7 +9,7 @@ public class Swimmer : MonoBehaviour
 
     public float GetDepth() =>
         Mathf.Max(
-            WaveValues.Instance.GetHeight(transform.position)
+            WaveField.Instance.GetHeight(transform.position)
                 - transform.position.y,
             0f
         // 100
