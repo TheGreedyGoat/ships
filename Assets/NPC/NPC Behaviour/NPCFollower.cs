@@ -7,7 +7,7 @@ public class NPCFollower : NPCBehaviour
     void Start()
     {
         var ship = GetComponent<Ship>();
-        var playerShip = Player.Instance.ship;
+        var playerShip = Player.Instance.Ship;
         if (ship != null && playerShip != null)
             // Ensure the NPC can hold speed with the player
             ship.stats = ship.stats.CopyWith(

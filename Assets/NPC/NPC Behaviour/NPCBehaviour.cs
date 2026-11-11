@@ -23,7 +23,7 @@ public abstract class NPCBehaviour : MonoBehaviour
     void Start()
     {
         if (target == null)
-            target = Player.Instance.ship.transform;
+            target = Player.Instance.Ship.transform;
     }
 
     public virtual Vector3 GetDesiredHeading()

@@ -43,22 +43,24 @@ public class Shipbaker : MonoSingleton<Shipbaker>
     [SerializeField]
     Sail sailPrefab;
 
-    float topDeckHeight;
-    float frontOffset;
-
     [Header("PhysicsPresets")]
     [SerializeField, Range(0, 1)]
     float YawInertiaTensorFactor = 0.5f;
 
-    public Mesh BakeShipMesh(int cannonDecks, int cannonColumns)
+    public Mesh BakeShipMesh(
+        int cannonDecks,
+        int cannonColumns,
+        out Vector3 cannonSlotDimensions,
+        out float topDeckHeight
+    )
     {
         cannonSlotPositions = new();
         var m = CannonDeckPrefabs[1].sharedMesh;
 
-        Vector3 cannonSlotDimensions = GetMeshDimensions(m);
+        cannonSlotDimensions = GetMeshDimensions(m);
 
         topDeckHeight = cannonSlotDimensions.y * cannonDecks;
-        frontOffset = cannonSlotDimensions.z * cannonColumns;
+        float frontOffset = cannonSlotDimensions.z * cannonColumns;
         var hullParts = new List<CombineInstance>();
         var windowParts = new List<CombineInstance>();
         //
@@ -331,11 +333,18 @@ public class Shipbaker : MonoSingleton<Shipbaker>
     public void BakeShip(Ship ship)
     {
         var stats = ship.stats;
-        var cannonDecks = ship.CannonDecks;
-        var cannonColumns = ship.CannonsPerDeck;
-        var mesh = BakeShipMesh(cannonDecks, cannonColumns);
+        var shipData = ship.data;
+        var cannonDecks = shipData.CannonDecks;
+        var cannonColumns = shipData.CannonColumns;
+        var mesh = BakeShipMesh(
+            cannonDecks,
+            cannonColumns,
+            out shipData.CannonSlotDimensions,
+            out shipData.DeckHeight
+        );
 
         Vector3 shipDimensions = GetMeshDimensions(mesh, out float lowestZ);
+        shipData.MeshDimensions = shipDimensions;
         var shipBodyObject = ship.gameObject;
         var shipTransform = ship.transform;
 
@@ -442,7 +451,7 @@ public class Shipbaker : MonoSingleton<Shipbaker>
 
         var sail = Instantiate(
             sailPrefab,
-            shipTransform.position + new Vector3(0, topDeckHeight, 0.5f),
+            shipTransform.position + new Vector3(0, shipData.DeckHeight, 0.5f),
             shipTransform.rotation,
             shipTransform
         );
@@ -463,6 +472,8 @@ public class Shipbaker : MonoSingleton<Shipbaker>
                 autoTensor.z
             ) / body.mass;
     }
+
+    private void AddPlayerComponents(Ship ship) { }
 
     string GetShipName(int cannonDecks, int cannonColumns) =>
         $"Ship ({cannonColumns} x {cannonDecks})";

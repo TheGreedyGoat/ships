@@ -9,13 +9,10 @@ public class Ship : MonoBehaviour
     public CannonStats CannonStats;
 
     [SerializeField]
-    public int CannonDecks;
-
-    [SerializeField]
-    public int CannonsPerDeck;
-
-    [SerializeField]
     bool isPlayer = false;
+
+    [SerializeField]
+    public ShipData data;
     private bool isBaked = false;
 
     public bool IsBaked
@@ -41,7 +38,7 @@ public class Ship : MonoBehaviour
 
     public void SetPlayer()
     {
-        Player.Instance.ship = this;
+        Player.Instance.SetPlayerShip(this);
     }
 
     public void Bake()

@@ -87,8 +87,8 @@ public class ShipCannons : MonoBehaviour
         return reloadTimes[broadSide, deck] > 0;
     }
 
-    int cannonDecks;
-    int cannonCols;
+    public int cannonDecks;
+    public int cannonCols;
 
     int Index(int side, int deck, int column) =>
         (side * cannonDecks + deck) * cannonCols + column;

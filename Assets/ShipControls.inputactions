@@ -112,26 +112,6 @@
             "id": "225787ca-1285-467e-8d9d-f9eb889b9413",
             "actions": [
                 {
-                    "name": "AimLeft",
-                    "type": "Button",
-                    "id": "1767ccf4-bbdd-44c9-8446-ff44718815b6",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
-                },
-                {
-                    "name": "AimRight",
-                    "type": "Button",
-                    "id": "04e35c0b-2991-48ea-a7e0-0a069dc3e1de",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
-                },
-                {
                     "name": "Fire Direct",
                     "type": "Button",
                     "id": "ef5abef0-42f2-4998-85db-f6bf8e28bc54",
@@ -140,20 +120,19 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "Aim",
+                    "type": "Button",
+                    "id": "c9bdc613-9174-40a0-b051-a32353acba1b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "f59b5e57-2b98-44b0-900f-73a92352896f",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AimLeft",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "1D Axis",
                     "id": "b35e2620-2d7e-45ce-b1a5-c5cb5b69e43e",
@@ -189,12 +168,12 @@
                 },
                 {
                     "name": "",
-                    "id": "3539ba09-c429-44c5-9dc2-e9d289d73fab",
+                    "id": "9090410a-08df-4cfa-9f9a-1c2cdc58b65d",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "",
+                    "interactions": "Hold(duration=0.01,pressPoint=0.5)",
                     "processors": "",
                     "groups": "",
-                    "action": "AimRight",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

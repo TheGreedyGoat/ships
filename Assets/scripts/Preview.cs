@@ -22,7 +22,12 @@ public class Preview : MonoSingleton<Preview>
 
     public Mesh BakeMeshFromSerialized()
     {
-        return Shipbaker.Instance.BakeShipMesh(cannonDecks, cannonColumns);
+        return Shipbaker.Instance.BakeShipMesh(
+            cannonDecks,
+            cannonColumns,
+            out Vector3 _,
+            out float __
+        );
     }
 
     public void PreviewOnTarget()
