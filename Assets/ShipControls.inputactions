@@ -122,9 +122,9 @@
                     "priority": 0
                 },
                 {
-                    "name": "Aim",
+                    "name": "FirstPersonFire",
                     "type": "Button",
-                    "id": "c9bdc613-9174-40a0-b051-a32353acba1b",
+                    "id": "f397dbb8-9f9c-47cb-855e-a71ae45cd693",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -168,12 +168,12 @@
                 },
                 {
                     "name": "",
-                    "id": "9090410a-08df-4cfa-9f9a-1c2cdc58b65d",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "Hold(duration=0.01,pressPoint=0.5)",
+                    "id": "34358117-3804-461d-b98d-abfee51f387f",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aim",
+                    "action": "FirstPersonFire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -204,9 +204,9 @@
                     "priority": 0
                 },
                 {
-                    "name": "CameraMode",
+                    "name": "FirstPerson",
                     "type": "Button",
-                    "id": "d6fdbdfd-3338-4f25-bc26-6a030379b058",
+                    "id": "25e2ce3f-eb02-438b-ad53-bd0f22fb36d9",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -261,12 +261,12 @@
                 },
                 {
                     "name": "",
-                    "id": "6ad46740-bebe-47de-9ff4-56fdd9825107",
-                    "path": "<Keyboard>/ctrl",
-                    "interactions": "",
+                    "id": "58bab4de-87ab-480e-879c-77395dfcf2c8",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold(duration=0.01,pressPoint=0.5)",
                     "processors": "",
                     "groups": "",
-                    "action": "CameraMode",
+                    "action": "FirstPerson",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

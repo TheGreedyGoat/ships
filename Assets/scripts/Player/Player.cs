@@ -14,7 +14,7 @@ class Player : MonoSingleton<Player>
         Ship.gameObject.GetComponentInChildren<ShipCannons>();
     private CameraMovement _cam => CameraMovement.Instance;
 
-    private bool isAiming;
+    private bool isFirstPerson;
 
     //
     //  ######   ######## ######## ######## ######## ########   ######
@@ -38,7 +38,7 @@ class Player : MonoSingleton<Player>
     public CameraMovement Cam => _cam;
     public ShipCannons Cannons => _cannons;
 
-    public bool IsAiming => isAiming;
+    public bool IsAiming => isFirstPerson;
 
     void Start()
     {
@@ -60,7 +60,7 @@ class Player : MonoSingleton<Player>
     {
         this.ship = ship;
         Cam.transform.parent = ship.transform;
-        Cam.transform.localPosition = ship.data.LocalCameraPos;
+        Cam.transform.localPosition = ship.Data.LocalCameraPos;
     }
 
     //
@@ -170,8 +170,17 @@ class Player : MonoSingleton<Player>
 
         Bind(zoom, InputMode.OnPerformed, UpdateMethod.Default, OnScroll);
 
-        var aim = actions.FindAction("Aim");
-        Bind(aim, InputMode.OnPerfomedAndReleased, UpdateMethod.Default, OnAim);
+        var firstPerson = actions.FindAction("FirstPerson");
+        Bind(
+            firstPerson,
+            InputMode.OnPerfomedAndReleased,
+            UpdateMethod.Default,
+            OnFirstPersonAim
+        );
+
+        var fpFire = actions.FindAction("FirstPersonFire");
+
+        Bind(fpFire, InputMode.OnPerformed, UpdateMethod.Default, OnFPFire);
     }
 
     //
@@ -224,15 +233,20 @@ class Player : MonoSingleton<Player>
 
     void OnFire(InputAction action)
     {
-        if (Ship == null)
-            return;
-        float value = (action.ReadValue<float>() + 1) * 0.5f;
-        Cannons.FireNextDeck(Mathf.RoundToInt(value));
+        // if (Ship == null)
+        //     return;
+        // float value = (action.ReadValue<float>() + 1) * 0.5f;
+        // Cannons.FireNextDeck(Mathf.RoundToInt(value));
     }
 
-    void OnAim(InputAction action)
+    void OnFirstPersonAim(InputAction action)
     {
-        isAiming = action.IsPressed();
+        isFirstPerson = action.IsPressed();
+    }
+
+    void OnFPFire(InputAction _)
+    {
+        Cannons.Fire(Cam.FacedBroadSide);
     }
 
     //
@@ -291,12 +305,19 @@ class Player : MonoSingleton<Player>
     {
         if (Ship == null)
             return;
-
+        int invertMod = GlobalValues.Instance.InvertCameraPitch ? -1 : 1;
         var valueRaw = action.ReadValue<Vector2>();
         Vector2 value;
         value = valueRaw * GlobalValues.Instance.CameraSensitivity;
-        value.y *= GlobalValues.Instance.InvertCameraPitch ? -1 : 1;
+        value.y *= invertMod;
         Cam.RecieveRotationInput(value);
+        if (isFirstPerson)
+            Cannons.Aim(
+                Cam.FacedBroadSide,
+                valueRaw.y
+                    * GlobalValues.Instance.AimingSensitivity
+                    * -invertMod
+            );
     }
 
     void OnScroll(InputAction action)

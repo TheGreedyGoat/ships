@@ -208,9 +208,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
-                    ""name"": ""Aim"",
+                    ""name"": ""FirstPersonFire"",
                     ""type"": ""Button"",
-                    ""id"": ""c9bdc613-9174-40a0-b051-a32353acba1b"",
+                    ""id"": ""f397dbb8-9f9c-47cb-855e-a71ae45cd693"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -254,12 +254,12 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""9090410a-08df-4cfa-9f9a-1c2cdc58b65d"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": ""Hold(duration=0.01,pressPoint=0.5)"",
+                    ""id"": ""34358117-3804-461d-b98d-abfee51f387f"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Aim"",
+                    ""action"": ""FirstPersonFire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -290,9 +290,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
-                    ""name"": ""CameraMode"",
+                    ""name"": ""FirstPerson"",
                     ""type"": ""Button"",
-                    ""id"": ""d6fdbdfd-3338-4f25-bc26-6a030379b058"",
+                    ""id"": ""25e2ce3f-eb02-438b-ad53-bd0f22fb36d9"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -347,12 +347,12 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""6ad46740-bebe-47de-9ff4-56fdd9825107"",
-                    ""path"": ""<Keyboard>/ctrl"",
-                    ""interactions"": """",
+                    ""id"": ""58bab4de-87ab-480e-879c-77395dfcf2c8"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold(duration=0.01,pressPoint=0.5)"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CameraMode"",
+                    ""action"": ""FirstPerson"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -368,12 +368,12 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         // Weaponry
         m_Weaponry = asset.FindActionMap("Weaponry", throwIfNotFound: true);
         m_Weaponry_FireDirect = m_Weaponry.FindAction("Fire Direct", throwIfNotFound: true);
-        m_Weaponry_Aim = m_Weaponry.FindAction("Aim", throwIfNotFound: true);
+        m_Weaponry_FirstPersonFire = m_Weaponry.FindAction("FirstPersonFire", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Rotate = m_Camera.FindAction("Rotate", throwIfNotFound: true);
         m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
-        m_Camera_CameraMode = m_Camera.FindAction("CameraMode", throwIfNotFound: true);
+        m_Camera_FirstPerson = m_Camera.FindAction("FirstPerson", throwIfNotFound: true);
     }
 
     ~@ShipControls()
@@ -564,7 +564,7 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Weaponry;
     private List<IWeaponryActions> m_WeaponryActionsCallbackInterfaces = new List<IWeaponryActions>();
     private readonly InputAction m_Weaponry_FireDirect;
-    private readonly InputAction m_Weaponry_Aim;
+    private readonly InputAction m_Weaponry_FirstPersonFire;
     /// <summary>
     /// Provides access to input actions defined in input action map "Weaponry".
     /// </summary>
@@ -581,9 +581,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @FireDirect => m_Wrapper.m_Weaponry_FireDirect;
         /// <summary>
-        /// Provides access to the underlying input action "Weaponry/Aim".
+        /// Provides access to the underlying input action "Weaponry/FirstPersonFire".
         /// </summary>
-        public InputAction @Aim => m_Wrapper.m_Weaponry_Aim;
+        public InputAction @FirstPersonFire => m_Wrapper.m_Weaponry_FirstPersonFire;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -613,9 +613,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             @FireDirect.started += instance.OnFireDirect;
             @FireDirect.performed += instance.OnFireDirect;
             @FireDirect.canceled += instance.OnFireDirect;
-            @Aim.started += instance.OnAim;
-            @Aim.performed += instance.OnAim;
-            @Aim.canceled += instance.OnAim;
+            @FirstPersonFire.started += instance.OnFirstPersonFire;
+            @FirstPersonFire.performed += instance.OnFirstPersonFire;
+            @FirstPersonFire.canceled += instance.OnFirstPersonFire;
         }
 
         /// <summary>
@@ -630,9 +630,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             @FireDirect.started -= instance.OnFireDirect;
             @FireDirect.performed -= instance.OnFireDirect;
             @FireDirect.canceled -= instance.OnFireDirect;
-            @Aim.started -= instance.OnAim;
-            @Aim.performed -= instance.OnAim;
-            @Aim.canceled -= instance.OnAim;
+            @FirstPersonFire.started -= instance.OnFirstPersonFire;
+            @FirstPersonFire.performed -= instance.OnFirstPersonFire;
+            @FirstPersonFire.canceled -= instance.OnFirstPersonFire;
         }
 
         /// <summary>
@@ -672,7 +672,7 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
     private List<ICameraActions> m_CameraActionsCallbackInterfaces = new List<ICameraActions>();
     private readonly InputAction m_Camera_Rotate;
     private readonly InputAction m_Camera_Zoom;
-    private readonly InputAction m_Camera_CameraMode;
+    private readonly InputAction m_Camera_FirstPerson;
     /// <summary>
     /// Provides access to input actions defined in input action map "Camera".
     /// </summary>
@@ -693,9 +693,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Zoom => m_Wrapper.m_Camera_Zoom;
         /// <summary>
-        /// Provides access to the underlying input action "Camera/CameraMode".
+        /// Provides access to the underlying input action "Camera/FirstPerson".
         /// </summary>
-        public InputAction @CameraMode => m_Wrapper.m_Camera_CameraMode;
+        public InputAction @FirstPerson => m_Wrapper.m_Camera_FirstPerson;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -728,9 +728,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             @Zoom.started += instance.OnZoom;
             @Zoom.performed += instance.OnZoom;
             @Zoom.canceled += instance.OnZoom;
-            @CameraMode.started += instance.OnCameraMode;
-            @CameraMode.performed += instance.OnCameraMode;
-            @CameraMode.canceled += instance.OnCameraMode;
+            @FirstPerson.started += instance.OnFirstPerson;
+            @FirstPerson.performed += instance.OnFirstPerson;
+            @FirstPerson.canceled += instance.OnFirstPerson;
         }
 
         /// <summary>
@@ -748,9 +748,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             @Zoom.started -= instance.OnZoom;
             @Zoom.performed -= instance.OnZoom;
             @Zoom.canceled -= instance.OnZoom;
-            @CameraMode.started -= instance.OnCameraMode;
-            @CameraMode.performed -= instance.OnCameraMode;
-            @CameraMode.canceled -= instance.OnCameraMode;
+            @FirstPerson.started -= instance.OnFirstPerson;
+            @FirstPerson.performed -= instance.OnFirstPerson;
+            @FirstPerson.canceled -= instance.OnFirstPerson;
         }
 
         /// <summary>
@@ -821,12 +821,12 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFireDirect(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Aim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "FirstPersonFire" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAim(InputAction.CallbackContext context);
+        void OnFirstPersonFire(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camera" which allows adding and removing callbacks.
@@ -850,11 +850,11 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnZoom(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "CameraMode" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "FirstPerson" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCameraMode(InputAction.CallbackContext context);
+        void OnFirstPerson(InputAction.CallbackContext context);
     }
 }

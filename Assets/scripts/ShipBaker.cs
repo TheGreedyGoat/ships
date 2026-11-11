@@ -333,7 +333,7 @@ public class Shipbaker : MonoSingleton<Shipbaker>
     public void BakeShip(Ship ship)
     {
         var stats = ship.stats;
-        var shipData = ship.data;
+        var shipData = ship.Data;
         var cannonDecks = shipData.CannonDecks;
         var cannonColumns = shipData.CannonColumns;
         var mesh = BakeShipMesh(
@@ -409,36 +409,8 @@ public class Shipbaker : MonoSingleton<Shipbaker>
         cannons.transform.localRotation = Quaternion.identity;
 
         var cMono = cannons.AddComponent<ShipCannons>();
-        var leftAim = new GameObject("Left Aim");
-        var rightAim = new GameObject("Right Aim");
-        leftAim.transform.parent = cMono.transform;
-        rightAim.transform.parent = cMono.transform;
 
-        leftAim.transform.localPosition =
-            Vector3.zero - Vector3.right * shipDimensions.x * 0.5f;
-        rightAim.transform.localPosition =
-            Vector3.zero + Vector3.right * shipDimensions.x * 0.5f;
-
-        leftAim.transform.localRotation = Quaternion.identity;
-        rightAim.transform.localRotation = Quaternion.identity;
-
-        var leftFilter = leftAim.AddComponent<MeshFilter>();
-        var rightFilter = rightAim.AddComponent<MeshFilter>();
-        var leftRend = leftAim.AddComponent<MeshRenderer>();
-        leftRend.enabled = false;
-        var rightRend = rightAim.AddComponent<MeshRenderer>();
-        rightRend.enabled = false;
-
-        leftRend.material = GlobalValues.Instance.AimMeshMaterial;
-        rightRend.material = GlobalValues.Instance.AimMeshMaterial;
-
-        cMono.Setup(
-            cannonPositions,
-            CannonPrefab,
-            shipBodyObject.transform,
-            leftFilter,
-            rightFilter
-        );
+        cMono.Setup(cannonPositions, CannonPrefab, shipBodyObject.transform);
         //
         //  ######     ###    #### ##
         // ##    ##   ## ##    ##  ##
@@ -477,15 +449,4 @@ public class Shipbaker : MonoSingleton<Shipbaker>
 
     string GetShipName(int cannonDecks, int cannonColumns) =>
         $"Ship ({cannonColumns} x {cannonDecks})";
-
-    void OnDrawGizmos()
-    {
-        if (cannonSlotPositions == null)
-            return;
-        Gizmos.color = Color.burlywood;
-        foreach (var pos in cannonSlotPositions)
-        {
-            Gizmos.DrawSphere(pos, .3f);
-        }
-    }
 }

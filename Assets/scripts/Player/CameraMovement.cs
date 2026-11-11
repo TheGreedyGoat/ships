@@ -49,7 +49,7 @@ public class CameraMovement : MonoSingleton<CameraMovement>
     [SerializeField]
     float pitchRotationSpeed = 1;
 
-    bool IsAiming => player.IsAiming;
+    public bool IsFirstPerson => player.IsAiming;
     bool wasAimingLastFrame = false;
     private bool isInTransition = false;
 
@@ -69,6 +69,9 @@ public class CameraMovement : MonoSingleton<CameraMovement>
     [SerializeField, Range(10, 1000)]
     private float transitionZoomSpeed = 1;
 
+    private const float Inv180 = 1 / 180f;
+    public int FacedBroadSide => 1 - Mathf.FloorToInt(CurrentYaw * Inv180);
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Awake()
     {
@@ -83,16 +86,16 @@ public class CameraMovement : MonoSingleton<CameraMovement>
         if (playerShip == null)
             return;
 
-        if (StayEven && !IsAiming)
+        if (StayEven && !IsFirstPerson)
             ResetPitchAndRoll();
         if (isInTransition)
             Transition();
-        if (IsAiming)
-            OnAiming();
+        if (IsFirstPerson)
+            OnFirstPerson();
         else
-            OnNotAiming();
+            OnThirdPerson();
 
-        wasAimingLastFrame = IsAiming;
+        wasAimingLastFrame = IsFirstPerson;
     }
 
     void Transition()
@@ -134,7 +137,7 @@ public class CameraMovement : MonoSingleton<CameraMovement>
         }
     }
 
-    void OnAiming()
+    void OnFirstPerson()
     {
         if (!wasAimingLastFrame)
         {
@@ -145,12 +148,16 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
             isInTransition = true;
         }
+        player.Cannons.SetAimVisibility(FacedBroadSide, true);
+        player.Cannons.SetAimVisibility(1 - FacedBroadSide, false);
     }
 
-    void OnNotAiming()
+    void OnThirdPerson()
     {
         if (wasAimingLastFrame)
         {
+            player.Cannons.SetAimVisibility(0, false);
+            player.Cannons.SetAimVisibility(1, false);
             transitionZoomTarget = zoomCache;
             transitionPitchTarget = CurrentPitch;
 
@@ -173,7 +180,7 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
     public void RecieveZoomInput(float value)
     {
-        if (IsAiming || isInTransition)
+        if (IsFirstPerson || isInTransition)
             return;
         Zoom(value);
     }
@@ -185,15 +192,18 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
     void Pitch(float delta)
     {
-        float minPitchAngle = IsAiming
+        float minPitchAngle = IsFirstPerson
             ? minPitchAngleDegAim
             : minPitchAngleDeg3rd;
-        float maxPitchAngle = IsAiming
+        float maxPitchAngle = IsFirstPerson
             ? maxPitchAngleDegAim
             : maxPitchAngleDeg3rd;
+        float desiredPitch = IsFirstPerson
+            ? CurrentPitch + delta * pitchRotationSpeed * Time.deltaTime
+            : player.Cannons.CurrentCannonPitch;
 
         float newPitch = Mathf.Clamp(
-            CurrentPitch + delta * pitchRotationSpeed * Time.deltaTime,
+            desiredPitch,
             minPitchAngle,
             maxPitchAngle
         );

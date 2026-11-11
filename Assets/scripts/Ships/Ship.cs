@@ -12,7 +12,7 @@ public class Ship : MonoBehaviour
     bool isPlayer = false;
 
     [SerializeField]
-    public ShipData data;
+    public ShipData Data;
     private bool isBaked = false;
 
     public bool IsBaked
