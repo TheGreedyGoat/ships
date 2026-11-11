@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -10,10 +11,9 @@ public class ShipCannons : MonoBehaviour
     [SerializeField]
     Cannon[] cannons;
 
-    Rigidbody cannonBallPrefab => Stats.CannonBall;
+    MaterialPropertyBlock matProperties;
 
-    [SerializeField]
-    float reloadTime = 5;
+    Rigidbody cannonBallPrefab => Stats.CannonBall;
 
     public int CannonsPerBroadSide => cannonCols * cannonDecks;
 
@@ -21,6 +21,13 @@ public class ShipCannons : MonoBehaviour
 
     public float CurrentCannonPitch => currentCannonPitch;
     GameObject[] aimParents;
+
+    Quaternion[] defaultCannonRotations;
+
+    private void Awake()
+    {
+        matProperties ??= new MaterialPropertyBlock();
+    }
 
     Ship Ship
     {
@@ -115,9 +122,8 @@ public class ShipCannons : MonoBehaviour
     void Update()
     {
         UpdateReload();
-        // if (cam.IsFirstPerson)
-        //     Aim(cam.FacedBroadSide);
         ShowAim();
+        // AimIndicatorMaterial.SetFloat("_Progress", Mathf.InverseLerp(Stats.ReloadTimeSeconds, 0, ));
     }
 
     void UpdateReload()
@@ -156,6 +162,11 @@ public class ShipCannons : MonoBehaviour
         reloadTimes = new float[2];
         reloadTimes[0] = 0;
         reloadTimes[1] = 0;
+        defaultCannonRotations = new Quaternion[2]
+        {
+            Quaternion.Euler(0, 180, 0),
+            Quaternion.identity,
+        };
         for (int d = 0; d < cannonDecks; d++)
         {
             for (int c = 0; c < cannonCols; c++)
@@ -163,7 +174,7 @@ public class ShipCannons : MonoBehaviour
                 cannons[Index(0, d, c)] = Instantiate(
                         prefab,
                         transform.TransformPoint(cannonPos[0, d, c]),
-                        Quaternion.Euler(new(0, 180, 0)) * transform.rotation,
+                        defaultCannonRotations[0] * transform.rotation,
                         transform
                     )
                     .GetComponent<Cannon>();
@@ -171,7 +182,7 @@ public class ShipCannons : MonoBehaviour
                 cannons[Index(1, d, c)] = Instantiate(
                         prefab,
                         transform.TransformPoint(cannonPos[1, d, c]),
-                        transform.rotation * Quaternion.Euler(new(0, 0, 0)),
+                        transform.rotation,
                         transform
                     )
                     .GetComponent<Cannon>();
@@ -251,6 +262,17 @@ public class ShipCannons : MonoBehaviour
                     var filter in aimParent.GetComponentsInChildren<MeshFilter>()
                 )
                 {
+                    var renderer = filter.GetComponent<MeshRenderer>();
+                    renderer.GetPropertyBlock(matProperties);
+                    matProperties.SetFloat(
+                        "_Progress",
+                        Mathf.InverseLerp(
+                            Stats.ReloadTimeSeconds,
+                            0,
+                            reloadTimes[side]
+                        )
+                    );
+                    renderer.SetPropertyBlock(matProperties);
                     filter.mesh = mesh;
                 }
             }
@@ -316,6 +338,20 @@ public class ShipCannons : MonoBehaviour
                 var cannon = cannons[Index(side, d, c)];
                 // var right = cannons[Index(1, d, c)];
                 cannon.transform.rotation = rot;
+            }
+        }
+    }
+
+    public void ResetCannonRotations()
+    {
+        for (int d = 0; d < cannonDecks; d++)
+        {
+            for (int c = 0; c < cannonCols; c++)
+            {
+                cannons[Index(0, d, c)].transform.localRotation =
+                    defaultCannonRotations[0];
+                cannons[Index(1, d, c)].transform.localRotation =
+                    defaultCannonRotations[1];
             }
         }
     }

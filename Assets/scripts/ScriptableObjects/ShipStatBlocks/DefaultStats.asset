@@ -15,6 +15,6 @@ MonoBehaviour:
   lateralFrictionFactor: 1.5
   longitudalFrictionFactor: 0.3
   turningAgility: 0.6
-  acceleration: 1.5
+  acceleration: 2.58
   reloadTimeSeconds: 10
   MinPropulsionAngle: 15

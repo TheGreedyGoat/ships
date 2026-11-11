@@ -155,8 +155,20 @@ class Player : MonoSingleton<Player>
             OnSailsUpDown
         );
 
-        var fire = actions.FindAction("Fire Direct");
-        Bind(fire, InputMode.OnPerformed, UpdateMethod.Default, OnFire);
+        var dFireL = actions.FindAction("DirectFireLeft");
+        Bind(
+            dFireL,
+            InputMode.OnPerformed,
+            UpdateMethod.Default,
+            OnDirectFireLeft
+        );
+        var dFireR = actions.FindAction("DirectFireRight");
+        Bind(
+            dFireR,
+            InputMode.OnPerformed,
+            UpdateMethod.Default,
+            OnDirectFireRight
+        );
 
         var mouseMoved = actions.FindAction("Rotate");
         Bind(
@@ -181,6 +193,30 @@ class Player : MonoSingleton<Player>
         var fpFire = actions.FindAction("FirstPersonFire");
 
         Bind(fpFire, InputMode.OnPerformed, UpdateMethod.Default, OnFPFire);
+    }
+
+    void UnbindAll()
+    {
+        foreach (var binding in bindings)
+        {
+            if (binding.PerformedHandler != null)
+            {
+                binding.Action.performed -= binding.PerformedHandler;
+                if (binding.Mode == InputMode.OnPerfomedAndReleased)
+                {
+                    binding.Action.canceled -= binding.PerformedHandler;
+                }
+            }
+
+            binding.Action.Disable();
+        }
+
+        bindings.Clear();
+    }
+
+    void OnDisable()
+    {
+        UnbindAll();
     }
 
     //
@@ -231,22 +267,29 @@ class Player : MonoSingleton<Player>
     // ##       #### ##     ## ########
     //
 
-    void OnFire(InputAction action)
+    void OnDirectFireLeft(InputAction action)
     {
-        // if (Ship == null)
-        //     return;
-        // float value = (action.ReadValue<float>() + 1) * 0.5f;
-        // Cannons.FireNextDeck(Mathf.RoundToInt(value));
+        Cannons.Fire(0);
+    }
+
+    void OnDirectFireRight(InputAction action)
+    {
+        Cannons.Fire(1);
     }
 
     void OnFirstPersonAim(InputAction action)
     {
         isFirstPerson = action.IsPressed();
+        if (!isFirstPerson)
+        {
+            Cannons.ResetCannonRotations();
+        }
     }
 
     void OnFPFire(InputAction _)
     {
-        Cannons.Fire(Cam.FacedBroadSide);
+        if (isFirstPerson)
+            Cannons.Fire(Cam.FacedBroadSide);
     }
 
     //
@@ -271,24 +314,6 @@ class Player : MonoSingleton<Player>
         if (Sail == null)
             return;
         Sail.SailsUpDown(action.ReadValue<float>());
-    }
-
-    void UnbindAll()
-    {
-        foreach (var binding in bindings)
-        {
-            if (binding.PerformedHandler != null)
-                binding.Action.performed -= binding.PerformedHandler;
-
-            binding.Action.Disable();
-        }
-
-        bindings.Clear();
-    }
-
-    void OnDisable()
-    {
-        UnbindAll();
     }
 
     //

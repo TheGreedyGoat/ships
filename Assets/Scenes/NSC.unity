@@ -303,15 +303,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[0].Amplitude
-      value: 7.3
+      value: 3.3
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[1].Amplitude
-      value: 3.21
+      value: 2.09
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[2].Amplitude
-      value: 0.75
+      value: 1.22
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[3].Amplitude
@@ -331,7 +331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[2].WaveLength
-      value: 52.9
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 619306436339570599, guid: d2aafbe62c49cde4d806777fc0474089, type: 3}
       propertyPath: waves.Array.data[3].WaveLength
@@ -467,6 +467,26 @@ PrefabInstance:
       propertyPath: CannonsPerDeck
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3241124817175044574, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
+      propertyPath: Data.CannonDecks
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3241124817175044574, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
+      propertyPath: data.CannonDecks
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3241124817175044574, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
+      propertyPath: Data.CannonColumns
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3241124817175044574, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
+      propertyPath: data.CannonColumns
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3543708359685785680, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 2800000, guid: 83438053370c84456a73f7f95ef821fb, type: 3}
     - target: {fileID: 3543708359685785680, guid: 9bb10b67110f479419521bcced197ba2, type: 3}
       propertyPath: m_Name
       value: PlayerShip
@@ -553,10 +573,10 @@ MonoBehaviour:
   CannonBallPrefab: {fileID: 5285272931615804240, guid: 3be9a87baa6bc074d9ff98b71256e209, type: 3}
   DefaultCannonStats: {fileID: 11400000, guid: 0b2b4116aff5ce347bbaa0d45f9a9a8b, type: 2}
   CameraSensitivity: 2
-  InvertCameraPitch: 0
+  InvertCameraPitch: 1
   AimingSensitivity: 0.167
   InvertCannonPitch: 0
-  AimMeshMaterial: {fileID: 2100000, guid: 070e24a2ed1993345891409c1637b17c, type: 2}
+  AimMeshMaterial: {fileID: 2100000, guid: fdd75dfacc9e23546bdf2796ecb3ea0a, type: 2}
 --- !u!4 &1044582098
 Transform:
   m_ObjectHideFlags: 0
@@ -974,6 +994,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1146751531564379315, guid: 227244ff165c00445aa5608d7567a16c, type: 3}
+      propertyPath: maxPitchAngleDegAim
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146751531564379315, guid: 227244ff165c00445aa5608d7567a16c, type: 3}
+      propertyPath: minPitchAngleDegAim
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146751531564379315, guid: 227244ff165c00445aa5608d7567a16c, type: 3}
+      propertyPath: transitionZoomSpeed
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146751531564379315, guid: 227244ff165c00445aa5608d7567a16c, type: 3}
+      propertyPath: transitionPitchSpeed
+      value: 360
+      objectReference: {fileID: 0}
     - target: {fileID: 5540373405709096545, guid: 227244ff165c00445aa5608d7567a16c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -37.41544
@@ -1055,10 +1091,10 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 698773948}
   - {fileID: 294824108}
   - {fileID: 1339487197}
   - {fileID: 2078455844}
-  - {fileID: 698773948}
   - {fileID: 1044582098}
   - {fileID: 1428015475}
   - {fileID: 1199334874}

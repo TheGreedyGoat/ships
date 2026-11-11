@@ -198,9 +198,9 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             ""id"": ""225787ca-1285-467e-8d9d-f9eb889b9413"",
             ""actions"": [
                 {
-                    ""name"": ""Fire Direct"",
+                    ""name"": ""FirstPersonFire"",
                     ""type"": ""Button"",
-                    ""id"": ""ef5abef0-42f2-4998-85db-f6bf8e28bc54"",
+                    ""id"": ""f397dbb8-9f9c-47cb-855e-a71ae45cd693"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -208,9 +208,29 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
-                    ""name"": ""FirstPersonFire"",
+                    ""name"": ""3rdPErsonAim"",
                     ""type"": ""Button"",
-                    ""id"": ""f397dbb8-9f9c-47cb-855e-a71ae45cd693"",
+                    ""id"": ""149a73b5-3020-4cfe-b6af-e31c5a455628"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""DirectFireLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""2a467694-2f03-40f0-882f-df7613fae78e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""DirectFireRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""70af9dee-02ba-46ac-a690-18c15d605210"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -220,39 +240,6 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""b35e2620-2d7e-45ce-b1a5-c5cb5b69e43e"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Fire Direct"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""523fec05-90d7-4721-9947-7d826441c654"",
-                    ""path"": ""<Keyboard>/q"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Fire Direct"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""c0972760-9441-451d-8734-2881676125e4"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Fire Direct"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""34358117-3804-461d-b98d-abfee51f387f"",
                     ""path"": ""<Mouse>/leftButton"",
@@ -260,6 +247,39 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""FirstPersonFire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9acf2bbd-0265-4733-b940-068d399ab835"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""3rdPErsonAim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""abae5afb-70f3-4fe2-85c8-1725a334451e"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DirectFireLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e3961b47-fc84-454e-a72b-2c07ca581a4d"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DirectFireRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -367,8 +387,10 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         m_Movement_SailsUpDown = m_Movement.FindAction("Sails Up/Down", throwIfNotFound: true);
         // Weaponry
         m_Weaponry = asset.FindActionMap("Weaponry", throwIfNotFound: true);
-        m_Weaponry_FireDirect = m_Weaponry.FindAction("Fire Direct", throwIfNotFound: true);
         m_Weaponry_FirstPersonFire = m_Weaponry.FindAction("FirstPersonFire", throwIfNotFound: true);
+        m_Weaponry__3rdPErsonAim = m_Weaponry.FindAction("3rdPErsonAim", throwIfNotFound: true);
+        m_Weaponry_DirectFireLeft = m_Weaponry.FindAction("DirectFireLeft", throwIfNotFound: true);
+        m_Weaponry_DirectFireRight = m_Weaponry.FindAction("DirectFireRight", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Rotate = m_Camera.FindAction("Rotate", throwIfNotFound: true);
@@ -563,8 +585,10 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
     // Weaponry
     private readonly InputActionMap m_Weaponry;
     private List<IWeaponryActions> m_WeaponryActionsCallbackInterfaces = new List<IWeaponryActions>();
-    private readonly InputAction m_Weaponry_FireDirect;
     private readonly InputAction m_Weaponry_FirstPersonFire;
+    private readonly InputAction m_Weaponry__3rdPErsonAim;
+    private readonly InputAction m_Weaponry_DirectFireLeft;
+    private readonly InputAction m_Weaponry_DirectFireRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "Weaponry".
     /// </summary>
@@ -577,13 +601,21 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// </summary>
         public WeaponryActions(@ShipControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Weaponry/FireDirect".
-        /// </summary>
-        public InputAction @FireDirect => m_Wrapper.m_Weaponry_FireDirect;
-        /// <summary>
         /// Provides access to the underlying input action "Weaponry/FirstPersonFire".
         /// </summary>
         public InputAction @FirstPersonFire => m_Wrapper.m_Weaponry_FirstPersonFire;
+        /// <summary>
+        /// Provides access to the underlying input action "Weaponry/_3rdPErsonAim".
+        /// </summary>
+        public InputAction @_3rdPErsonAim => m_Wrapper.m_Weaponry__3rdPErsonAim;
+        /// <summary>
+        /// Provides access to the underlying input action "Weaponry/DirectFireLeft".
+        /// </summary>
+        public InputAction @DirectFireLeft => m_Wrapper.m_Weaponry_DirectFireLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "Weaponry/DirectFireRight".
+        /// </summary>
+        public InputAction @DirectFireRight => m_Wrapper.m_Weaponry_DirectFireRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -610,12 +642,18 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_WeaponryActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_WeaponryActionsCallbackInterfaces.Add(instance);
-            @FireDirect.started += instance.OnFireDirect;
-            @FireDirect.performed += instance.OnFireDirect;
-            @FireDirect.canceled += instance.OnFireDirect;
             @FirstPersonFire.started += instance.OnFirstPersonFire;
             @FirstPersonFire.performed += instance.OnFirstPersonFire;
             @FirstPersonFire.canceled += instance.OnFirstPersonFire;
+            @_3rdPErsonAim.started += instance.On_3rdPErsonAim;
+            @_3rdPErsonAim.performed += instance.On_3rdPErsonAim;
+            @_3rdPErsonAim.canceled += instance.On_3rdPErsonAim;
+            @DirectFireLeft.started += instance.OnDirectFireLeft;
+            @DirectFireLeft.performed += instance.OnDirectFireLeft;
+            @DirectFireLeft.canceled += instance.OnDirectFireLeft;
+            @DirectFireRight.started += instance.OnDirectFireRight;
+            @DirectFireRight.performed += instance.OnDirectFireRight;
+            @DirectFireRight.canceled += instance.OnDirectFireRight;
         }
 
         /// <summary>
@@ -627,12 +665,18 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
         /// <seealso cref="WeaponryActions" />
         private void UnregisterCallbacks(IWeaponryActions instance)
         {
-            @FireDirect.started -= instance.OnFireDirect;
-            @FireDirect.performed -= instance.OnFireDirect;
-            @FireDirect.canceled -= instance.OnFireDirect;
             @FirstPersonFire.started -= instance.OnFirstPersonFire;
             @FirstPersonFire.performed -= instance.OnFirstPersonFire;
             @FirstPersonFire.canceled -= instance.OnFirstPersonFire;
+            @_3rdPErsonAim.started -= instance.On_3rdPErsonAim;
+            @_3rdPErsonAim.performed -= instance.On_3rdPErsonAim;
+            @_3rdPErsonAim.canceled -= instance.On_3rdPErsonAim;
+            @DirectFireLeft.started -= instance.OnDirectFireLeft;
+            @DirectFireLeft.performed -= instance.OnDirectFireLeft;
+            @DirectFireLeft.canceled -= instance.OnDirectFireLeft;
+            @DirectFireRight.started -= instance.OnDirectFireRight;
+            @DirectFireRight.performed -= instance.OnDirectFireRight;
+            @DirectFireRight.canceled -= instance.OnDirectFireRight;
         }
 
         /// <summary>
@@ -814,19 +858,33 @@ public partial class @ShipControls: IInputActionCollection2, IDisposable
     public interface IWeaponryActions
     {
         /// <summary>
-        /// Method invoked when associated input action "Fire Direct" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnFireDirect(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "FirstPersonFire" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFirstPersonFire(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "3rdPErsonAim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void On_3rdPErsonAim(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DirectFireLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDirectFireLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DirectFireRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDirectFireRight(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camera" which allows adding and removing callbacks.

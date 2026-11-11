@@ -40,11 +40,11 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
     [SerializeField]
     [Range(0, 45)]
-    float minPitchAngleDegAim = -15;
+    float minPitchAngleDegFP = -15;
 
     [SerializeField]
     [Range(45, 90)]
-    float maxPitchAngleDegAim = 5;
+    float maxPitchAngleDegFP = 5;
 
     [SerializeField]
     float pitchRotationSpeed = 1;
@@ -53,7 +53,7 @@ public class CameraMovement : MonoSingleton<CameraMovement>
     bool wasAimingLastFrame = false;
     private bool isInTransition = false;
 
-    public float CurrentYaw => yaw.eulerAngles.y;
+    public float CurrentYaw => yaw.localEulerAngles.y;
 
     public float CurrentPitch => pitch.localEulerAngles.x;
     public float CurrentZoom => zoom.localPosition.z;
@@ -193,14 +193,14 @@ public class CameraMovement : MonoSingleton<CameraMovement>
     void Pitch(float delta)
     {
         float minPitchAngle = IsFirstPerson
-            ? minPitchAngleDegAim
+            ? minPitchAngleDegFP
             : minPitchAngleDeg3rd;
         float maxPitchAngle = IsFirstPerson
-            ? maxPitchAngleDegAim
+            ? maxPitchAngleDegFP
             : maxPitchAngleDeg3rd;
         float desiredPitch = IsFirstPerson
-            ? CurrentPitch + delta * pitchRotationSpeed * Time.deltaTime
-            : player.Cannons.CurrentCannonPitch;
+            ? -player.Cannons.CurrentCannonPitch
+            : CurrentPitch + delta * pitchRotationSpeed * Time.deltaTime;
 
         float newPitch = Mathf.Clamp(
             desiredPitch,
