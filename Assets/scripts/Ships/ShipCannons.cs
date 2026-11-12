@@ -12,7 +12,7 @@ public class ShipCannons : MonoBehaviour
     [SerializeField]
     Cannon[] cannons;
 
-    private float currentCannonPitch = 0;
+    private float currentCannonPitchLocal = 0;
 
     Quaternion[] defaultCannonRotations;
 
@@ -48,12 +48,12 @@ public class ShipCannons : MonoBehaviour
     }
 
     public int CannonDecks => Ship.Data.CannonDecks;
-    public int CannonCols => Ship.Data.CannonColumns;
+    public int CannonColumns => Ship.Data.CannonColumns;
     CameraMovement cam => CameraMovement.Instance;
     public Cannon[] Cannons => cannons;
     Rigidbody cannonBallPrefab => Stats.CannonBall;
-    public int CannonsPerBroadSide => CannonCols * CannonDecks;
-    public float CurrentCannonPitch => currentCannonPitch;
+    public int CannonsPerBroadSide => CannonColumns * CannonDecks;
+    public float CurrentCannonPitch => currentCannonPitchLocal;
 
     public float[] ReloadTimes => reloadTimes;
 
@@ -76,7 +76,7 @@ public class ShipCannons : MonoBehaviour
             {
                 for (int d = 0; d < CannonDecks; d++)
                 {
-                    for (int c = 0; c < CannonCols; c++) { }
+                    for (int c = 0; c < CannonColumns; c++) { }
                 }
             }
         }
@@ -102,11 +102,11 @@ public class ShipCannons : MonoBehaviour
 
     int Index(int side, int deck, int column)
     {
-        int index = (side * CannonDecks + deck) * CannonCols + column;
+        int index = (side * CannonDecks + deck) * CannonColumns + column;
         if (index < 0 || index >= cannons.Length)
         {
             throw new Exception(
-                $"Cannon Parameters\nside = {side}, deck = {deck} column = {column}\nAre not in bounds of this ship\nCannonDecks: {CannonDecks}, CannonColumns: {CannonCols}"
+                $"Cannon Parameters\nside = {side}, deck = {deck} column = {column}\nAre not in bounds of this ship\nCannonDecks: {CannonDecks}, CannonColumns: {CannonColumns}"
             );
         }
 
@@ -146,7 +146,7 @@ public class ShipCannons : MonoBehaviour
         transform.parent = parent;
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
-        cannons = new Cannon[2 * CannonDecks * CannonCols];
+        cannons = new Cannon[2 * CannonDecks * CannonColumns];
         reloadTimes = new float[2];
         reloadTimes[0] = 0;
         reloadTimes[1] = 0;
@@ -157,7 +157,7 @@ public class ShipCannons : MonoBehaviour
         };
         for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < CannonCols; c++)
+            for (int c = 0; c < CannonColumns; c++)
             {
                 cannons[Index(0, d, c)] = Instantiate(
                         prefab,
@@ -214,46 +214,51 @@ public class ShipCannons : MonoBehaviour
 
     public void Aim(int side, float deltaP)
     {
-        currentCannonPitch = Mathf.Clamp(
-            currentCannonPitch + deltaP,
+        currentCannonPitchLocal = Mathf.Clamp(
+            currentCannonPitchLocal + deltaP,
             -Stats.ElevationLimitDeg,
             Stats.ElevationLimitDeg
         );
+        float shipRoll = Ship.transform.eulerAngles.z;
 
         float shipYaw = Ship.transform.eulerAngles.y;
         float sideStraightYaw = shipYaw + (side == 0 ? 180f : 0f);
         float desiredYaw = cam.CurrentYaw - 90f;
 
-        float offset = Mathf.DeltaAngle(sideStraightYaw, desiredYaw);
-        float clampedOffset = Mathf.Clamp(
-            offset,
+        float yawDelta = Mathf.DeltaAngle(sideStraightYaw, desiredYaw);
+        float clampedDelta = Mathf.Clamp(
+            yawDelta,
             -Stats.TraversalLimitDeg,
             Stats.TraversalLimitDeg
         );
 
         Quaternion rot = Quaternion.Euler(
             0f,
-            sideStraightYaw + clampedOffset,
-            currentCannonPitch
+            sideStraightYaw + clampedDelta,
+            shipRoll + currentCannonPitchLocal
         );
-        // 0
 
         for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < CannonCols; c++)
+            for (int c = 0; c < CannonColumns; c++)
             {
                 var cannon = cannons[Index(side, d, c)];
-                // var right = cannons[Index(1, d, c)];
                 cannon.transform.rotation = rot;
             }
         }
     }
 
+    public void SetLocalCannonRotation(
+        int side,
+        float desiredPitch,
+        float desiredYaw
+    ) { }
+
     public void ResetCannonRotations()
     {
         for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < CannonCols; c++)
+            for (int c = 0; c < CannonColumns; c++)
             {
                 cannons[Index(0, d, c)].transform.localRotation =
                     defaultCannonRotations[0];
@@ -261,6 +266,29 @@ public class ShipCannons : MonoBehaviour
                     defaultCannonRotations[1];
             }
         }
+    }
+
+    public Vector3[] GetShotPrediction(int side, float heightLimit = -5)
+    {
+        if (CannonDecks * CannonColumns == 0)
+            return new Vector3[0];
+
+        List<Vector3> points = new() { Vector3.zero };
+        float TimeStepsSec = 0.05f;
+        Vector3 velocity =
+            Stats.FireForce
+            * transform.InverseTransformDirection(
+                GetCannon(side, 0, 0).transform.right
+            );
+
+        for (int i = 0; i < 100; i++)
+        {
+            points.Add(points.Last() + velocity * TimeStepsSec);
+            velocity += Physics.gravity * TimeStepsSec;
+            if (points.Last().y < heightLimit)
+                break;
+        }
+        return points.ToArray();
     }
 
     //

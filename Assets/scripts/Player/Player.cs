@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mono.Cecil.Cil;
 using UnityCommunity.UnitySingleton;
 using UnityEditor.XR;
 using UnityEngine;
@@ -60,6 +61,11 @@ class Player : MonoSingleton<Player>
 
     public void SetPlayerShip(Ship ship)
     {
+        var npc = ship.GetComponent<NPCCore>();
+        if (npc != null)
+        {
+            npc.UnassignNPC();
+        }
         this.ship = ship;
         Cam.transform.parent = ship.transform;
         Cam.transform.localPosition = ship.Data.LocalCameraPos;

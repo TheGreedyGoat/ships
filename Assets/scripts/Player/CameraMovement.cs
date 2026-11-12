@@ -126,8 +126,6 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
         pitch.localEulerAngles = targetEulers;
 
-        print($"{CurrentPitch}, {transitionPitchTarget}");
-
         if (
             Mathf.Abs(CurrentZoom - transitionZoomTarget) < 0.01f
             && Mathf.Abs(CurrentPitch - transitionPitchTarget) < 0.01f

@@ -41,6 +41,17 @@ public class Ship : MonoBehaviour
         Player.Instance.SetPlayerShip(this);
     }
 
+    public void SetNPCBehaviour(NPCBehaviour behaviour)
+    {
+        if (Player.Instance.Ship == this)
+        {
+            Debug.LogWarning(
+                "Can't assign the player ship as NPC. Un- or reassign player first"
+            );
+            return;
+        }
+    }
+
     public void Bake()
     {
         if (isBaked)

@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class NPCCore : MonoBehaviour
@@ -24,6 +25,8 @@ public class NPCCore : MonoBehaviour
 
     NPCBehaviour Behaviour;
 
+    NPCCannons CannonController => GetComponentInChildren<NPCCannons>();
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,6 +34,11 @@ public class NPCCore : MonoBehaviour
         sail = GetComponentInChildren<Sail>();
         ship = GetComponent<Ship>();
         body = GetComponent<Rigidbody>();
+        if (CannonController == null)
+        {
+            GetComponentInChildren<ShipCannons>()
+                .gameObject.AddComponent<NPCCannons>();
+        }
     }
 
     void FixedUpdate()
@@ -81,5 +89,14 @@ public class NPCCore : MonoBehaviour
     void Steer(float direction)
     {
         movement.Steer(direction);
+    }
+
+    public void UnassignNPC()
+    {
+        if (Behaviour != null)
+        {
+            ObjectDestroyer.Destroy(Behaviour);
+        }
+        ObjectDestroyer.Destroy(this);
     }
 }

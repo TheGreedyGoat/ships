@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.Interactions;
 
-public struct MeshLin
+public struct Mesh2D
 {
     public Vector3[] vertices;
 

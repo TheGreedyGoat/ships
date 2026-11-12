@@ -103,7 +103,7 @@ public class PlayerCannons : MonoSingleton<PlayerCannons>
             if (!aimParent.activeSelf)
                 continue;
 
-            var mesh = PrecalcFlyingCurve(side, Ship.Data.CannonSlotDimensions);
+            var mesh = BuildAimingMesh(side);
             foreach (
                 var filter in aimParent.GetComponentsInChildren<MeshFilter>()
             )
@@ -124,29 +124,16 @@ public class PlayerCannons : MonoSingleton<PlayerCannons>
         }
     }
 
-    Mesh PrecalcFlyingCurve(int side, Vector3 slotDim)
+    Mesh BuildAimingMesh(int side)
     {
-        if (Data.CannonDecks * Data.CannonColumns == 0)
-            return new Mesh();
-
-        List<Vector3> points = new() { Vector3.zero };
-        float TimeStepsSec = 0.05f;
-        Vector3 velocity =
-            Stats.FireForce
-            * CannonTransform.InverseTransformDirection(
-                ShipCannons.GetCannon(side, 0, 0).transform.right
-            );
-
-        for (int i = 0; i < 20; i++)
+        return new Mesh2D()
         {
-            points.Add(points.Last() + velocity * TimeStepsSec);
-            velocity += Physics.gravity * TimeStepsSec;
-            if (points.Last().y < -5)
-                break;
-        }
-        return new MeshLin() { vertices = points.ToArray() }.Build(
+            vertices = ShipCannons.GetShotPrediction(side),
+        }.Build(
             1,
-            Vector3.forward * Data.CannonColumns * slotDim.z
+            Vector3.forward
+                * Data.CannonColumns
+                * Ship.Data.CannonSlotDimensions.z
         );
     }
 }

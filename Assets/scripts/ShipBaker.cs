@@ -332,7 +332,6 @@ public class Shipbaker : MonoSingleton<Shipbaker>
 
     public void BakeShip(Ship ship)
     {
-        var stats = ship.stats;
         var shipData = ship.Data;
         var cannonDecks = shipData.CannonDecks;
         var cannonColumns = shipData.CannonColumns;
@@ -445,7 +444,14 @@ public class Shipbaker : MonoSingleton<Shipbaker>
             ) / body.mass;
     }
 
-    private void AddPlayerComponents(Ship ship) { }
+    // float CalculateCannonRange(ShipCannons cannons)
+    // {
+    //     int iterations = 10;
+    //     for(int i = 0; i < iterations; i++)
+    //     {
+    //         cannons.GetShotPrediction(0, 0);
+    //     }
+    // }
 
     string GetShipName(int cannonDecks, int cannonColumns) =>
         $"Ship ({cannonColumns} x {cannonDecks})";
