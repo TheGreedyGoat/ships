@@ -346,7 +346,7 @@ class Player : MonoSingleton<Player>
         value.y *= invertMod;
         Cam.RecieveRotationInput(value);
         if (isFirstPerson)
-            Cannons.Aim(
+            Cannons.PlayerAim(
                 Cam.FacedBroadSide,
                 valueRaw.y
                     * GlobalValues.Instance.AimingSensitivity

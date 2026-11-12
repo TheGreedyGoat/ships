@@ -7,7 +7,9 @@ using UnityEngine;
 public class CannonStats : ScriptableObject
 {
     public Rigidbody CannonBall;
-    public float FireForce;
+
+    [Min(1)]
+    public float CannonBallSpeed;
     public float ReloadTimeSeconds = 5;
 
     [Range(0, 90)]

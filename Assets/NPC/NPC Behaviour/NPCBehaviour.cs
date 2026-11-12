@@ -10,9 +10,17 @@ public abstract class NPCBehaviour : MonoBehaviour
         ApproachDistance,
         MatchHeading,
         Disengage,
+        PrepareToFire,
     }
 
+    protected Ship Ship => GetComponent<Ship>();
+
     protected BehaviourState state = BehaviourState.Idle;
+
+    NPCCore npc => GetComponent<NPCCore>();
+
+    protected NPCCannons CannonController =>
+        GetComponentInChildren<NPCCannons>();
 
     [SerializeField]
     public DistanceRange DesiredRange;
@@ -20,34 +28,30 @@ public abstract class NPCBehaviour : MonoBehaviour
     [SerializeField]
     protected Transform target;
 
+    public Transform Target => target;
+
+    protected Vector3 desiredHeading = Vector3.forward;
+
+    public Vector3 DesiredHeading => desiredHeading;
+
     void Start()
     {
         if (target == null)
             target = Player.Instance.Ship.transform;
     }
 
-    public virtual Vector3 GetDesiredHeading()
-    {
-        if (target == null)
-            return transform.right;
-        switch (state)
-        {
-            case BehaviourState.ApproachDistance:
-                return Approach();
-            case BehaviourState.MatchHeading:
-                return target.forward;
-            case BehaviourState.Disengage:
-                return transform.position - target.position;
-            default:
-                return transform.forward;
-        }
-    }
+    // public abstract Vector3 GetDesiredHeading();
 
-    protected abstract BehaviourState GetNextState();
+    protected abstract BehaviourState UpdateState();
 
     void Update()
     {
-        state = GetNextState();
+        state = UpdateState();
+        Debug.DrawLine(
+            transform.position,
+            transform.position + DesiredHeading,
+            Color.antiqueWhite
+        );
     }
 
     protected Vector3 InterpolateByRangeDeviation(
@@ -85,12 +89,13 @@ public abstract class NPCBehaviour : MonoBehaviour
         return (targetPoint - transform.position).normalized;
     }
 
-    protected Vector3 ShowClosestBroadSide()
+    protected Vector3 GetHeadingForClosestBroadSide(Vector3 aimTarget)
     {
-        var dirToTarget = (target.position - transform.position).normalized;
+        var dirToTarget = (aimTarget - transform.position).normalized;
         var tDotSelf = Vector3.Dot(dirToTarget, transform.right);
+
         return Quaternion.Euler(0f, 90f * Mathf.Sign(tDotSelf), 0f)
-            * (transform.position - target.position).normalized;
+            * (transform.position - aimTarget).normalized;
     }
 
     //
@@ -103,51 +108,51 @@ public abstract class NPCBehaviour : MonoBehaviour
     //  ######   #### ######## ##     ##  #######   ######
     //
 
-    void OnDrawGizmos()
-    {
-        if (target == null)
-            return;
-        int appState = DesiredRange.CheckDistance(
-            transform.position,
-            target.position
-        );
+    // void OnDrawGizmos()
+    // {
+    //     if (target == null)
+    //         return;
+    //     int appState = DesiredRange.CheckDistance(
+    //         transform.position,
+    //         target.position
+    //     );
 
-        float step = 2 * Mathf.PI / 10;
-        float maxR = DesiredRange.MaxDistance;
-        float minR = DesiredRange.MinDistance;
-        for (int i = 0; i <= 10; i++)
-        {
-            float currentAngle = i * step;
-            float nextAngle = (i + 1) * step;
-            float cosC = Mathf.Cos(currentAngle);
-            float sinC = Mathf.Sin(currentAngle);
+    //     float step = 2 * Mathf.PI / 10;
+    //     float maxR = DesiredRange.MaxDistance;
+    //     float minR = DesiredRange.MinDistance;
+    //     for (int i = 0; i <= 10; i++)
+    //     {
+    //         float currentAngle = i * step;
+    //         float nextAngle = (i + 1) * step;
+    //         float cosC = Mathf.Cos(currentAngle);
+    //         float sinC = Mathf.Sin(currentAngle);
 
-            float cosN = Mathf.Cos(nextAngle);
-            float sinN = Mathf.Sin(nextAngle);
+    //         float cosN = Mathf.Cos(nextAngle);
+    //         float sinN = Mathf.Sin(nextAngle);
 
-            Vector3 start = new(cosC, 0, sinC);
-            Vector3 end = new(cosN, 0, sinN);
+    //         Vector3 start = new(cosC, 0, sinC);
+    //         Vector3 end = new(cosN, 0, sinN);
 
-            Gizmos.color = appState == 0 ? Color.green : Color.red;
-            Gizmos.DrawLine(
-                target.position + start * minR + Vector3.up,
-                end * minR + target.position + Vector3.up
-            );
-            Gizmos.DrawLine(
-                target.position + start * maxR + Vector3.up,
-                end * maxR + target.position + Vector3.up
-            );
+    //         Gizmos.color = appState == 0 ? Color.green : Color.red;
+    //         Gizmos.DrawLine(
+    //             target.position + start * minR + Vector3.up,
+    //             end * minR + target.position + Vector3.up
+    //         );
+    //         Gizmos.DrawLine(
+    //             target.position + start * maxR + Vector3.up,
+    //             end * maxR + target.position + Vector3.up
+    //         );
 
-            Gizmos.color = Color.blue;
+    //         Gizmos.color = Color.blue;
 
-            Gizmos.DrawLine(
-                target.position
-                    + start * DesiredRange.DesiredDistance
-                    + Vector3.up,
-                end * DesiredRange.DesiredDistance
-                    + target.position
-                    + Vector3.up
-            );
-        }
-    }
+    //         Gizmos.DrawLine(
+    //             target.position
+    //                 + start * DesiredRange.DesiredDistance
+    //                 + Vector3.up,
+    //             end * DesiredRange.DesiredDistance
+    //                 + target.position
+    //                 + Vector3.up
+    //         );
+    //     }
+    // }
 }

@@ -38,7 +38,7 @@ public class ShipCannons : MonoBehaviour
             return s;
         }
     }
-    CannonStats Stats
+    public CannonStats Stats
     {
         get
         {
@@ -212,10 +212,24 @@ public class ShipCannons : MonoBehaviour
     // ##     ## #### ##     ##
     //
 
-    public void Aim(int side, float deltaP)
+    //TODO: Move this to PlayerCannons
+    public void PlayerAim(int side, float deltaP)
+    {
+        SetLocalCannonRotation(
+            side,
+            currentCannonPitchLocal + deltaP,
+            cam.CurrentYaw
+        );
+    }
+
+    public void SetLocalCannonRotation(
+        int side,
+        float desiredPitchDeg,
+        float desiredYawDeg
+    )
     {
         currentCannonPitchLocal = Mathf.Clamp(
-            currentCannonPitchLocal + deltaP,
+            desiredPitchDeg,
             -Stats.ElevationLimitDeg,
             Stats.ElevationLimitDeg
         );
@@ -223,9 +237,7 @@ public class ShipCannons : MonoBehaviour
 
         float shipYaw = Ship.transform.eulerAngles.y;
         float sideStraightYaw = shipYaw + (side == 0 ? 180f : 0f);
-        float desiredYaw = cam.CurrentYaw - 90f;
-
-        float yawDelta = Mathf.DeltaAngle(sideStraightYaw, desiredYaw);
+        float yawDelta = Mathf.DeltaAngle(sideStraightYaw, desiredYawDeg - 90f);
         float clampedDelta = Mathf.Clamp(
             yawDelta,
             -Stats.TraversalLimitDeg,
@@ -248,12 +260,6 @@ public class ShipCannons : MonoBehaviour
         }
     }
 
-    public void SetLocalCannonRotation(
-        int side,
-        float desiredPitch,
-        float desiredYaw
-    ) { }
-
     public void ResetCannonRotations()
     {
         for (int d = 0; d < CannonDecks; d++)
@@ -270,13 +276,13 @@ public class ShipCannons : MonoBehaviour
 
     public Vector3[] GetShotPrediction(int side, float heightLimit = -5)
     {
-        if (CannonDecks * CannonColumns == 0)
-            return new Vector3[0];
+        // if (CannonDecks * CannonColumns == 0)
+        //     return new Vector3[0];
 
         List<Vector3> points = new() { Vector3.zero };
         float TimeStepsSec = 0.05f;
         Vector3 velocity =
-            Stats.FireForce
+            Stats.CannonBallSpeed
             * transform.InverseTransformDirection(
                 GetCannon(side, 0, 0).transform.right
             );
@@ -289,6 +295,15 @@ public class ShipCannons : MonoBehaviour
                 break;
         }
         return points.ToArray();
+    }
+
+    public float GetDistancePrediction(int side, float heightLimit = 0)
+    {
+        var shotarch = GetShotPrediction(side, heightLimit);
+
+        return shotarch.Length == 0
+            ? 0
+            : Mathf.Abs(shotarch.Last().x - shotarch.First().x);
     }
 
     //
@@ -317,7 +332,7 @@ public class ShipCannons : MonoBehaviour
         var broadSide = GetBroadSide(side);
         foreach (var c in broadSide)
         {
-            c.Fire(cannonBallPrefab, Stats.FireForce);
+            c.Fire(cannonBallPrefab, Stats.CannonBallSpeed);
         }
         reloadTimes[side] = Stats.ReloadTimeSeconds;
     }

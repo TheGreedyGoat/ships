@@ -28,6 +28,10 @@ public class Ship : MonoBehaviour
         {
             SetPlayer();
         }
+        else
+        {
+            SetNPCBehaviour();
+        }
 
         transform.position = new(
             transform.position.x,
@@ -41,7 +45,7 @@ public class Ship : MonoBehaviour
         Player.Instance.SetPlayerShip(this);
     }
 
-    public void SetNPCBehaviour(NPCBehaviour behaviour)
+    public void SetNPCBehaviour()
     {
         if (Player.Instance.Ship == this)
         {
@@ -50,6 +54,8 @@ public class Ship : MonoBehaviour
             );
             return;
         }
+        var core = gameObject.AddComponent<NPCCore>();
+        core.Setup<BasicAttacker>();
     }
 
     public void Bake()
@@ -66,8 +72,30 @@ public class Ship : MonoBehaviour
         {
             CannonStats = GlobalValues.Instance.DefaultCannonStats;
         }
+        CalculateCannonRange();
 
         isBaked = true;
+    }
+
+    void CalculateCannonRange()
+    {
+        var cannons = GetComponentInChildren<ShipCannons>();
+        int iterations = 50;
+        float currentAngle = -CannonStats.ElevationLimitDeg;
+        float angleLimit = CannonStats.ElevationLimitDeg;
+
+        float angleStep = Mathf.Abs(angleLimit - currentAngle) / iterations;
+        float longestDistance = 0;
+        for (; currentAngle <= angleLimit; currentAngle += angleStep)
+        {
+            cannons.SetLocalCannonRotation(0, currentAngle, 0);
+            longestDistance = Mathf.Max(
+                cannons.GetDistancePrediction(0, 0),
+                longestDistance
+            );
+        }
+
+        Data.MaxFireRange = longestDistance;
     }
 
     public void Unbake()
@@ -98,5 +126,18 @@ public class Ship : MonoBehaviour
                 DestroyImmediate(comp);
         }
         isBaked = false;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(
+            transform.position + transform.right * Data.MaxFireRange,
+            1
+        );
+        Gizmos.DrawSphere(
+            transform.position - transform.right * Data.MaxFireRange,
+            1
+        );
     }
 }

@@ -1,39 +1,34 @@
+using System;
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NPCCore : MonoBehaviour
 {
-    [SerializeField]
-    float propulsion = 2;
-
-    [SerializeField]
     float yawGain = 0.5f;
 
-    [SerializeField]
-    Ship ship;
+    Ship ship => GetComponent<Ship>();
 
-    [SerializeField]
-    float maxYawSpeed;
+    float maxYawSpeed = 20;
 
-    [SerializeField, Min(1)]
-    float rateErrorForFullSteer;
+    float rateErrorForFullSteer = 40;
 
     ShipMovement movement;
-    Sail sail;
+    Sail sail => GetComponentInChildren<Sail>();
 
-    Rigidbody body;
+    Rigidbody body => GetComponent<Rigidbody>();
 
-    NPCBehaviour Behaviour;
+    NPCBehaviour Behaviour => GetComponent<NPCBehaviour>();
 
     NPCCannons CannonController => GetComponentInChildren<NPCCannons>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    public void Setup<BehaviourType>()
+        where BehaviourType : NPCBehaviour
     {
         movement = GetComponent<ShipMovement>();
-        sail = GetComponentInChildren<Sail>();
-        ship = GetComponent<Ship>();
-        body = GetComponent<Rigidbody>();
+        gameObject.AddComponent<BehaviourType>();
         if (CannonController == null)
         {
             GetComponentInChildren<ShipCannons>()
@@ -43,20 +38,21 @@ public class NPCCore : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (sail == null)
-            sail = GetComponentInChildren<Sail>();
         if (movement == null)
             movement = GetComponentInChildren<ShipMovement>();
         if (Behaviour == null)
         {
-            Behaviour = GetComponent<NPCBehaviour>();
             if (Behaviour == null)
                 return;
         }
-        var desHeading = Behaviour.GetDesiredHeading();
-        SteerTowardsHeading(desHeading);
 
-        Debug.DrawLine(transform.position, transform.position + desHeading * 5);
+        ShowPreaim(Behaviour.Target);
+        SteerTowardsHeading(Behaviour.DesiredHeading);
+
+        // Debug.DrawLine(
+        //     transform.position,
+        //     transform.position + Behaviour.DesiredHeading * 5
+        // );
     }
 
     void SteerTowardsHeading(Vector3 targetHeading)
@@ -81,12 +77,12 @@ public class NPCCore : MonoBehaviour
         Steer(steerValue);
     }
 
-    void SetSailState(int state)
+    public void SetSailState(int state)
     {
         sail.sailState = state;
     }
 
-    void Steer(float direction)
+    public void Steer(float direction)
     {
         movement.Steer(direction);
     }
@@ -98,5 +94,24 @@ public class NPCCore : MonoBehaviour
             ObjectDestroyer.Destroy(Behaviour);
         }
         ObjectDestroyer.Destroy(this);
+    }
+
+    void ShowPreaim(Transform target)
+    {
+        if (target == null || target.GetComponent<Rigidbody>() == null)
+            return;
+        print($"Target: {target}");
+        print($"CannonStats: {ship.CannonStats}");
+        Debug.DrawLine(
+            transform.position,
+            PreAim.PredictPreaimPosition(
+                transform,
+                target,
+                target.GetComponent<Rigidbody>().linearVelocity,
+                ship.CannonStats.CannonBallSpeed,
+                5
+            ),
+            Color.green
+        );
     }
 }

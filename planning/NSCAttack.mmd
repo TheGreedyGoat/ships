@@ -1,0 +1,21 @@
+stateDiagram-v2
+    Idle
+    Approach
+
+    TurnToFire
+
+    Fire
+
+    KeepOut
+
+    [*] --> Idle
+    Idle --> Approach
+
+    Approach --> TurnToFire : Dist < fire Range/ 2
+    TurnToFire --> Approach: Dist > fire Range
+
+    TurnToFire --> Fire : OnTarget
+
+    Fire --> KeepOut
+
+    KeepOut --> Approach : Reloaded

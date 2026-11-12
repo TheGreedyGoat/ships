@@ -115,18 +115,4 @@ public class WeatherManager : MonoSingleton<WeatherManager>
                 + Random.Range(minWindSpeed, maxWindSpeed)
             ) * 0.5f;
     }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.teal;
-        Gizmos.DrawLine(
-            transform.position + Vector3.up,
-            transform.position + currentWind + Vector3.up
-        );
-        Gizmos.color = Color.mediumVioletRed;
-        Gizmos.DrawLine(
-            transform.position + Vector3.up,
-            transform.position + targetWind + Vector3.up
-        );
-    }
 }

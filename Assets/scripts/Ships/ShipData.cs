@@ -22,4 +22,6 @@ public class ShipData
 
     public Vector3 LocalCameraPos =>
         new(0, DeckHeight + 1, FrontPartOffset * 0.5f);
+
+    public float MaxFireRange;
 }

@@ -3,26 +3,37 @@ using UnityEngine;
 public class NPCCannons : MonoBehaviour
 {
     NPCCore NPC => GetComponentInParent<NPCCore>();
-    ShipCannons Cannons => GetComponent<ShipCannons>();
+    public ShipCannons Cannons => GetComponent<ShipCannons>();
 
-    bool CheckPreAim(int side, out RaycastHit hitInfo)
+    public void AimAndFire(Vector3 targetWorldPoint)
     {
-        var aimPoints = Cannons.GetShotPrediction(side);
-        hitInfo = default;
+        Vector3 toTarget = targetWorldPoint - transform.position;
+        float angleLeft = Vector3.SignedAngle(
+            transform.right,
+            toTarget,
+            Vector3.up
+        );
 
-        for (int i = 0; i < aimPoints.Length - 1; i++)
+        float angleRight = Vector3.SignedAngle(
+            transform.right,
+            toTarget,
+            Vector3.up
+        );
+
+        Cannons.SetLocalCannonRotation(0, 0, -angleLeft);
+        Cannons.SetLocalCannonRotation(1, 0, -angleRight);
+
+        if (angleLeft == 0)
         {
-            Vector3 curr = aimPoints[i];
-            Vector3 next = aimPoints[i + 1];
-            Vector3 dir = next - curr;
-
-            float len = dir.magnitude;
-
-            if (Physics.Raycast(aimPoints[i], dir.normalized, out hitInfo, len))
-            {
-                return true;
-            }
+            print("FIRE!!");
+            Cannons.Fire(0);
+            Debug.Break();
         }
-        return false;
+        if (angleRight == 0)
+        {
+            print("FIRE!!");
+            Cannons.Fire(1);
+            Debug.Break();
+        }
     }
 }

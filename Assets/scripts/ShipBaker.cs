@@ -444,15 +444,6 @@ public class Shipbaker : MonoSingleton<Shipbaker>
             ) / body.mass;
     }
 
-    // float CalculateCannonRange(ShipCannons cannons)
-    // {
-    //     int iterations = 10;
-    //     for(int i = 0; i < iterations; i++)
-    //     {
-    //         cannons.GetShotPrediction(0, 0);
-    //     }
-    // }
-
     string GetShipName(int cannonDecks, int cannonColumns) =>
         $"Ship ({cannonColumns} x {cannonDecks})";
 }

@@ -1,6 +1,6 @@
 class NPCFlee : NPCBehaviour
 {
-    protected override BehaviourState GetNextState()
+    protected override BehaviourState UpdateState()
     {
         return BehaviourState.Disengage;
     }

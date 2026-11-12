@@ -18,7 +18,7 @@ public class NPCFollower : NPCBehaviour
             );
     }
 
-    protected override BehaviourState GetNextState()
+    protected override BehaviourState UpdateState()
     {
         int rangeCheck = DesiredRange.CheckDistance(
             transform.position,
@@ -27,22 +27,5 @@ public class NPCFollower : NPCBehaviour
         return rangeCheck == 0
             ? BehaviourState.MatchHeading
             : BehaviourState.ApproachDistance;
-    }
-
-    public override Vector3 GetDesiredHeading()
-    {
-        // delta to tolerance limit
-        return InterpolateByRangeDeviation(target.forward, Approach());
-        // return Vector3.Lerp(
-        //     target.forward,
-        //     Approach(),
-        //     Mathf.Clamp01(
-        //         Mathf.InverseLerp(
-        //             DesiredRange.Tolerance * 0.5f,
-        //             DesiredRange.Tolerance * 1.5f,
-        //             delta
-        //         )
-        //     )
-        // );
     }
 }
