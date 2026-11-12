@@ -148,16 +148,16 @@ public class CameraMovement : MonoSingleton<CameraMovement>
 
             isInTransition = true;
         }
-        player.Cannons.SetAimVisibility(FacedBroadSide, true);
-        player.Cannons.SetAimVisibility(1 - FacedBroadSide, false);
+        player.PlayerCannons.SetAimVisibility(FacedBroadSide, true);
+        player.PlayerCannons.SetAimVisibility(1 - FacedBroadSide, false);
     }
 
     void OnThirdPerson()
     {
         if (wasAimingLastFrame)
         {
-            player.Cannons.SetAimVisibility(0, false);
-            player.Cannons.SetAimVisibility(1, false);
+            player.PlayerCannons.SetAimVisibility(0, false);
+            player.PlayerCannons.SetAimVisibility(1, false);
             transitionZoomTarget = zoomCache;
             transitionPitchTarget = CurrentPitch;
 

@@ -12,6 +12,7 @@ class Player : MonoSingleton<Player>
     private Sail _sail => Ship.gameObject.GetComponentInChildren<Sail>();
     private ShipCannons _cannons =>
         Ship.gameObject.GetComponentInChildren<ShipCannons>();
+
     private CameraMovement _cam => CameraMovement.Instance;
 
     private bool isFirstPerson;
@@ -25,6 +26,7 @@ class Player : MonoSingleton<Player>
     // ##    ##  ##          ##       ##    ##       ##    ##  ##    ##
     //  ######   ########    ##       ##    ######## ##     ##  ######
     //
+    public PlayerCannons PlayerCannons => PlayerCannons.Instance;
 
     public Ship Ship
     {
@@ -61,6 +63,7 @@ class Player : MonoSingleton<Player>
         this.ship = ship;
         Cam.transform.parent = ship.transform;
         Cam.transform.localPosition = ship.Data.LocalCameraPos;
+        PlayerCannons.SetupAimDisplays();
     }
 
     //

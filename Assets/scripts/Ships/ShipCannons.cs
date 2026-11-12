@@ -4,6 +4,7 @@ using System.Linq;
 using System.Transactions;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.PlayerLoop;
 
 public class ShipCannons : MonoBehaviour
@@ -11,24 +12,24 @@ public class ShipCannons : MonoBehaviour
     [SerializeField]
     Cannon[] cannons;
 
-    MaterialPropertyBlock matProperties;
-
-    Rigidbody cannonBallPrefab => Stats.CannonBall;
-
-    public int CannonsPerBroadSide => cannonCols * cannonDecks;
-
     private float currentCannonPitch = 0;
-
-    public float CurrentCannonPitch => currentCannonPitch;
-    GameObject[] aimParents;
 
     Quaternion[] defaultCannonRotations;
 
-    private void Awake()
-    {
-        matProperties ??= new MaterialPropertyBlock();
-    }
+    /// <summary>
+    /// stores the time left to reload for each broadside and deck
+    /// </summary>
+    float[] reloadTimes;
 
+    //
+    //  ######   ######## ########       ##  ######  ######## ########
+    // ##    ##  ##          ##         ##  ##    ## ##          ##
+    // ##        ##          ##        ##   ##       ##          ##
+    // ##   #### ######      ##       ##     ######  ######      ##
+    // ##    ##  ##          ##      ##           ## ##          ##
+    // ##    ##  ##          ##     ##      ##    ## ##          ##
+    //  ######   ########    ##    ##        ######  ########    ##
+    //
     Ship Ship
     {
         get
@@ -46,7 +47,15 @@ public class ShipCannons : MonoBehaviour
         }
     }
 
+    public int CannonDecks => Ship.Data.CannonDecks;
+    public int CannonCols => Ship.Data.CannonColumns;
     CameraMovement cam => CameraMovement.Instance;
+    public Cannon[] Cannons => cannons;
+    Rigidbody cannonBallPrefab => Stats.CannonBall;
+    public int CannonsPerBroadSide => CannonCols * CannonDecks;
+    public float CurrentCannonPitch => currentCannonPitch;
+
+    public float[] ReloadTimes => reloadTimes;
 
     Vector3 CannonEulers
     {
@@ -65,18 +74,13 @@ public class ShipCannons : MonoBehaviour
         {
             for (int s = 0; s < 2; s++)
             {
-                for (int d = 0; d < cannonDecks; d++)
+                for (int d = 0; d < CannonDecks; d++)
                 {
-                    for (int c = 0; c < cannonCols; c++) { }
+                    for (int c = 0; c < CannonCols; c++) { }
                 }
             }
         }
     }
-
-    /// <summary>
-    /// stores the time left to reload for each broadside and deck
-    /// </summary>
-    float[] reloadTimes;
 
     bool IsReloading(int broadSide)
     {
@@ -91,11 +95,23 @@ public class ShipCannons : MonoBehaviour
         return reloadTimes[broadSide] > 0;
     }
 
-    public int cannonDecks;
-    public int cannonCols;
+    public Cannon GetCannon(int side, int deck, int column)
+    {
+        return cannons[Index(side, deck, column)];
+    }
 
-    int Index(int side, int deck, int column) =>
-        (side * cannonDecks + deck) * cannonCols + column;
+    int Index(int side, int deck, int column)
+    {
+        int index = (side * CannonDecks + deck) * CannonCols + column;
+        if (index < 0 || index >= cannons.Length)
+        {
+            throw new Exception(
+                $"Cannon Parameters\nside = {side}, deck = {deck} column = {column}\nAre not in bounds of this ship\nCannonDecks: {CannonDecks}, CannonColumns: {CannonCols}"
+            );
+        }
+
+        return index;
+    }
 
     List<Cannon> GetBroadSide(int side)
     {
@@ -107,32 +123,6 @@ public class ShipCannons : MonoBehaviour
         }
 
         return bs;
-    }
-
-    //
-    // ##     ## ########  ########     ###    ######## ########
-    // ##     ## ##     ## ##     ##   ## ##      ##    ##
-    // ##     ## ##     ## ##     ##  ##   ##     ##    ##
-    // ##     ## ########  ##     ## ##     ##    ##    ######
-    // ##     ## ##        ##     ## #########    ##    ##
-    // ##     ## ##        ##     ## ##     ##    ##    ##
-    //  #######  ##        ########  ##     ##    ##    ########
-    //
-
-    void Update()
-    {
-        UpdateReload();
-        ShowAim();
-        // AimIndicatorMaterial.SetFloat("_Progress", Mathf.InverseLerp(Stats.ReloadTimeSeconds, 0, ));
-    }
-
-    void UpdateReload()
-    {
-        for (int s = 0; s < 2; s++)
-        {
-            if (reloadTimes[s] > 0)
-                reloadTimes[s] = Mathf.Max(reloadTimes[s] - Time.deltaTime, 0);
-        }
     }
 
     //
@@ -156,9 +146,7 @@ public class ShipCannons : MonoBehaviour
         transform.parent = parent;
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
-        cannonDecks = cannonPos.GetLength(1);
-        cannonCols = cannonPos.GetLength(2);
-        cannons = new Cannon[2 * cannonDecks * cannonCols];
+        cannons = new Cannon[2 * CannonDecks * CannonCols];
         reloadTimes = new float[2];
         reloadTimes[0] = 0;
         reloadTimes[1] = 0;
@@ -167,9 +155,9 @@ public class ShipCannons : MonoBehaviour
             Quaternion.Euler(0, 180, 0),
             Quaternion.identity,
         };
-        for (int d = 0; d < cannonDecks; d++)
+        for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < cannonCols; c++)
+            for (int c = 0; c < CannonCols; c++)
             {
                 cannons[Index(0, d, c)] = Instantiate(
                         prefab,
@@ -188,47 +176,30 @@ public class ShipCannons : MonoBehaviour
                     .GetComponent<Cannon>();
             }
         }
-
-        SetupAimDisplays();
     }
 
-    private void SetupAimDisplays()
+    //
+    // ##     ## ########  ########     ###    ######## ########
+    // ##     ## ##     ## ##     ##   ## ##      ##    ##
+    // ##     ## ##     ## ##     ##  ##   ##     ##    ##
+    // ##     ## ########  ##     ## ##     ##    ##    ######
+    // ##     ## ##        ##     ## #########    ##    ##
+    // ##     ## ##        ##     ## ##     ##    ##    ##
+    //  #######  ##        ########  ##     ##    ##    ########
+    //
+
+    void Update()
     {
-        aimParents = new GameObject[2] { new GameObject(), new GameObject() };
-        Vector3 shipDim = Ship.Data.MeshDimensions;
-        Vector3 slotDim = Ship.Data.CannonSlotDimensions;
-        float xPos = shipDim.x;
-        for (int i = 0; i < aimParents.Length; i++)
+        UpdateReload();
+    }
+
+    void UpdateReload()
+    {
+        for (int s = 0; s < 2; s++)
         {
-            // set the parent itself
-            var parent = aimParents[i].transform;
-            parent.parent = transform;
-            parent.localPosition = new(xPos * (i - 0.5f), 0, 0);
-
-            SetupFilter(parent, slotDim.y * 0.5f);
-
-            if (cannonDecks > 1)
-            {
-                SetupFilter(parent, slotDim.y * (cannonDecks - 0.5f));
-                if (cannonDecks > 2)
-                {
-                    SetupFilter(parent, slotDim.y * cannonDecks * 0.5f);
-                }
-            }
+            if (reloadTimes[s] > 0)
+                reloadTimes[s] = Mathf.Max(reloadTimes[s] - Time.deltaTime, 0);
         }
-    }
-
-    private void SetupFilter(Transform parent, float yOffset)
-    {
-        var filter = new GameObject();
-        filter.transform.parent = parent;
-
-        filter.AddComponent<MeshFilter>();
-        filter.AddComponent<MeshRenderer>().material = GlobalValues
-            .Instance
-            .AimMeshMaterial;
-
-        filter.transform.localPosition = new(0, yOffset, 0);
     }
 
     //
@@ -240,70 +211,6 @@ public class ShipCannons : MonoBehaviour
     // ##     ##  ##  ##     ##
     // ##     ## #### ##     ##
     //
-
-    public void SetAimVisibility(int side, bool visible)
-    {
-        print($"Setting side {side} to visible {visible}");
-        aimParents[side].SetActive(visible);
-    }
-
-    void ShowAim()
-    {
-        for (int side = 0; side < 2; side++)
-        {
-            var aimParent = aimParents[side];
-            if (aimParent.activeSelf)
-            {
-                var mesh = PrecalcFlyingCurve(
-                    side,
-                    Ship.Data.CannonSlotDimensions
-                );
-                foreach (
-                    var filter in aimParent.GetComponentsInChildren<MeshFilter>()
-                )
-                {
-                    var renderer = filter.GetComponent<MeshRenderer>();
-                    renderer.GetPropertyBlock(matProperties);
-                    matProperties.SetFloat(
-                        "_Progress",
-                        Mathf.InverseLerp(
-                            Stats.ReloadTimeSeconds,
-                            0,
-                            reloadTimes[side]
-                        )
-                    );
-                    renderer.SetPropertyBlock(matProperties);
-                    filter.mesh = mesh;
-                }
-            }
-        }
-    }
-
-    Mesh PrecalcFlyingCurve(int side, Vector3 slotDim)
-    {
-        if (cannonDecks * cannonCols == 0)
-            return new Mesh();
-
-        List<Vector3> points = new() { Vector3.zero };
-        float TimeStepsSec = 0.05f;
-        Vector3 velocity =
-            Stats.FireForce
-            * transform.InverseTransformDirection(
-                cannons[Index(side, 0, 0)].transform.right
-            );
-
-        for (int i = 0; i < 20; i++)
-        {
-            points.Add(points.Last() + velocity * TimeStepsSec);
-            velocity += Physics.gravity * TimeStepsSec;
-            if (points.Last().y < -5)
-                break;
-        }
-        return new MeshLin() { vertices = points.ToArray() }.Build(
-            1,
-            Vector3.forward * cannonCols * slotDim.z
-        );
-    }
 
     public void Aim(int side, float deltaP)
     {
@@ -331,9 +238,9 @@ public class ShipCannons : MonoBehaviour
         );
         // 0
 
-        for (int d = 0; d < cannonDecks; d++)
+        for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < cannonCols; c++)
+            for (int c = 0; c < CannonCols; c++)
             {
                 var cannon = cannons[Index(side, d, c)];
                 // var right = cannons[Index(1, d, c)];
@@ -344,9 +251,9 @@ public class ShipCannons : MonoBehaviour
 
     public void ResetCannonRotations()
     {
-        for (int d = 0; d < cannonDecks; d++)
+        for (int d = 0; d < CannonDecks; d++)
         {
-            for (int c = 0; c < cannonCols; c++)
+            for (int c = 0; c < CannonCols; c++)
             {
                 cannons[Index(0, d, c)].transform.localRotation =
                     defaultCannonRotations[0];
